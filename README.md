@@ -1,215 +1,169 @@
-# Prototipo de gestión de alquiler de canchas
-
-## 1. Descripción general
-
-Este proyecto corresponde a un prototipo funcional de alquiler de 2 canchas sintéticas, orientado a un flujo de navegación web con enfoque móvil primero. El objetivo principal es demostrar la lógica de negocio, la interacción del usuario y la administración de reservas sin depender de una base de datos externa ni de un backend dedicado.
-
-El prototipo funciona localmente con almacenamiento del navegador y es suficiente para validar el comportamiento del flujo, la sesión, el calendario y las reservas.
-
-## 2. Plataforma objetivo
-
-- Navegador web
-- Enfoque móvil first
-- Diseño vertical con respuesta funcional para tablet y escritorio
-- Interfaz de usuario pensada para uso rápido y simple
-
-## 3. Reglas de negocio
-
-- La reserva se realiza por horas enteras, no por fracciones.
-- Los estados posibles de una reserva son: Reservada, En curso, Cancelada y Pendiente por aprobación.
-- No puede alquilarse la misma hora del día a más de un cliente por cancha.
-- La disponibilidad de las canchas va de 6:00 a.m. a 10:00 p.m.
-- El calendario ofrece una ventana de visualización de hasta 30 días a partir del día actual.
-- Las cancelaciones de reserva solo pueden ejecutarse sobre reservas futuras o pendientes.
-- No existe un rol de cliente con autenticación para esta versión del prototipo; el cliente usa el catálogo público y el administrador/encargado accede mediante login.
-
-## 4. Entidades del sistema
-
-### 4.1 Canchas
-
-- Nombre
-- Disponibilidad
-- Días fuera de servicio
-- Imagen
-- Precio por hora
-
-### 4.2 Usuarios
-
-- Nombre completo
-- Usuario
-- Rol
-- Estado
-
-### 4.3 Roles
-
-- Administrador
-- Encargado
-- Cliente
-
-### 4.4 Reservas
-
-- Fecha
-- Horas reservadas
-- Cliente asociado
-- Estado
-- Total
-
-## 5. Actores y permisos
-
-### Administrador
-
-- Crear nuevo usuario
-- Crear nueva cancha
-- Editar una cancha existente
-- Eliminar una cancha
-- Consultar disponibilidad de las canchas
-- Aprobar reservas pendientes
-- Aprobar cancelaciones
-- Consultar reservas
-- Cancelar reservas
-
-### Encargado
-
-- Consultar disponibilidad de las canchas
-- Consultar reservas
-- Ver reservas del día
-
-### Cliente
-
-- Consultar disponibilidad de canchas
-- Realizar una reserva
-- Consultar reservas propias
-- Solicitar cancelación de una reserva
-
-## 6. Vistas del prototipo
-
-### 6.1 Vistas públicas
-
-- Home público
-- Catálogo de canchas
-- Calendario de cancha
-- Horas del día
-- Formulario de reserva
-
-### 6.2 Vistas administrativas
-
-- Home administrador
-- Inicio de sesión
-- Creación de usuario
-- Creación y edición de cancha
-- Reservas generales
-- Reservas del día
-
-### 6.3 Vistas del cliente
-
-- Catálogo de canchas
-- Calendario de cancha
-- Horas del día
-- Formulario de reserva
-- Mis reservas
-
-## 7. Relación entre vistas
-
-### Vista de cliente
-
-- Home
-- Catálogo de canchas
-- Calendario de cancha
-- Horas del día
-- Formulario de reserva
-
-### Vista de administrador y encargado
-
-- Inicio de sesión
-- Home administrador
-- Catálogo de canchas
-- Calendario de cancha
-- Reservas del día
-- Reservas generales
-- Gestión de usuarios y canchas
-
-## 8. Descripción de las vistas
-
-### Catálogo de canchas
-
-Lista todas las canchas disponibles para consultar su disponibilidad y reservar. El administrador puede acceder a un menú contextual para editar y eliminar canchas, además de crear nuevas.
-
-### Calendario de cancha
-
-Se despliega al seleccionar una cancha y permite elegir un día dentro del rango permitido. Para el rol administrador y encargado, incluye la opción de marcar días como fuera de servicio, con una acción reversible mediante switch.
-
-### Horas del día
-
-Se presenta al seleccionar un día específico. Muestra las franjas horarias disponibles y permite seleccionar las horas que el cliente desea reservar.
-
-### Formulario de reserva
-
-Se abre desde la vista de horas. Aquí el cliente completa sus datos personales y confirma la reserva con las horas seleccionadas.
-
-### Creación de usuario
-
-Panel reservado para crear usuarios, seleccionando rol, nombre y contraseña. Es una vista específica del administrador.
-
-### Inicio de sesión
-
-Permite ingresar usuario y contraseña para acceder como administrador o encargado.
-
-### Reservas
-
-Lista todas las reservas registradas, ordenadas por criterio provisional de fecha. El administrador puede gestionar las acciones de aprobación, cancelación y revisión de solicitudes.
-
-### Reservas del día
-
-Vista enfocada en el día seleccionado, mostrando todas las reservas del mismo día y cancha. Es una vista específica para administrador/encargado.
-
-### Mis reservas
-
-Permite al cliente consultar las reservas asociadas a su documento y solicitar cancelaciones si aplica.
-
-## 9. Aspectos visuales
-
-- Colores cálidos y pastel
-- Enfoque mobile first
-- Interfaz inspirada en una estética simple y limpia
-- Uso de encabezados directos en cada vista
-- No se usan banners de marca ni elementos visuales innecesarios
-- Se prioriza la claridad de uso sobre la complejidad visual
-
-## 10. Restricciones y limitaciones
-
-- No se implementará pasarela de pago en línea.
-- El pago sigue siendo tradicional y no se gestionará dentro del prototipo.
-- No se usará chat interno ni notificaciones en tiempo real.
-- No se contemplan turnos administrativos ni operativos complejos.
-- No se desarrollará una aplicación nativa.
-- No se crearán nuevas entidades lógicas ni nuevas vistas fuera del alcance definido.
-- Los menús contextuales son la única forma de uso de modalidad emergente.
-- No se contempla la integración con backend ni base de datos externa.
-
-## 11. Criterios de aceptación
-
-- El sistema no permite el solapamiento de horas reservadas en una misma cancha.
-- El cliente puede consultar disponibilidad y precio sin requerir contacto directo con el administrador.
-- El administrador y el encargado pueden revisar el estado y flujo de las reservas con un nivel operativo adecuado para este prototipo.
-- El flujo de usuario se mantiene coherente según el rol autenticado.
-
-## 12. Ejecución local
-
-Para ver el prototipo en local, basta con abrir el archivo principal desde un navegador o servir la carpeta con un servidor estático simple.
-
-Ejemplo con Python:
-
-```bash
-python -m http.server 8000
-```
-
-Luego abrir en el navegador:
-
-```text
-http://localhost:8000/index.html
-```
-
-## 13. Nota de alcance
-
-Este es un prototipo funcional de interfaz y lógica de negocio en frontend. No está pensado como producto final ni como implementación de producción con persistencia real, autenticación robusta ni servicios backend.
+1.Proyecto 
+Alquiler de 2 canchas sintéticas. Prototipo para tener un ejemplo interactivo, no es necesaria la conexión a base de datos externa de momento, no está destinado a ser el producto final a nivel código.
+
+2.Plataforma objetivo
+-Navegador web, orientado a móvil (mobile first), formato vertical pero suficientemente responsive para modo PC y Tablet.
+
+3.Reglas de negocio
+-La reserva se hace por horas enteras, no por fracciones de ella.
+-Los estados posibles de las reservas son: Reservada, En curso, Cancelada y Pendiente por aprobación.
+-No es posible alquilar la misma hora del día a más de un cliente.
+-La disponibilidad de las canchas es de 6am a 10pm
+-Visualización de días en el calendario con alcance de un mes 
+-No hay usuarios para los clientes
+-Las cancelaciones de reserva solo se podrá para reservas pendientes, es decir con fecha y hora del futuro.
+
+4.Entidades y propiedades
+Canchas
+-Nombre
+-Disponible
+-Días Fuera de servicio
+-imagen
+-Pecio por hora
+
+Usuarios
+-Nombre
+-Rol
+-Estado
+
+Roles
+-Nombre
+
+Reservas
+-Fecha
+-Horas
+-Cliente
+
+Actores
+Administrador
+-Usuario
+-Nombre
+
+Encargado
+-Usuario
+-Nombre
+
+Cliente
+-Documento
+-Nombre
+-Teléfono
+
+5.Acciones por actores
+Administrador:
+-Crear nuevo usuario
+-Crear nueva cancha
+-Editar datos de una cancha existente
+-Eliminar una cancha
+-Consultar disponibilidad de las canchas
+-Aprobar solicitudes de alquiler (reservas)
+-Aprobar cancelación de reservas
+-Consultar reservas
+-Cancelar reservas
+
+Encargado
+-Consultar disponibilidad de las canchas
+-Consultar reservas
+
+Cliente
+-Consultar disponibilidad de las canchas
+-Realizar una reserva 
+-Consultar sus propias reservas.
+-Solicitud de cancelación de reserva.
+
+6.Vistas y actores con acceso a ellas
+Home
+-Administrador
+-Encargado
+-Cliente
+
+Home Administrador
+-Administrador
+-Encargado
+
+Catálogo de canchas
+-Administrador
+-Operario
+-Cliente
+
+Calendario de Cancha
+-Encargado
+-Administrado
+-Cliente
+
+Horas del día
+-Cliente
+
+Formulario para una reserva
+-Cliente
+
+Creación de usuario (Administrador/Encargado)
+-Administrador
+
+Inicio de sesión (Administrador/Encargado)
+-Administrador
+-Encargado
+
+Reservas 
+-Administrador
+-Encargado
+
+Reservas del día
+-Administrador
+-Encargado
+
+
+Mis reservas
+-Cliente
+-Operario
+-Administrador
+
+7.Relación entre vistas
+Vista cliente
+-Home
+-Home contiene: Catálogo de canchas y Mis reservas
+-Catálogo de cancha contiene: Calendario de cancha.
+-Calendario de Cancha contiene: Horas del día
+-Horas del día contiene: Hacer una reserva
+
+Vista Administrador/Encargado
+-Home Administrador.
+- Home Administrador contiene: Inicio de sesión.
+-Inicio de sesión contiene: Catálogo de canchas y Reservas.
+-Catalogo de canchas contiene: Calendario de Canchas.
+-Calendario de canchas contiene: Reservas del día.
+-Home Administrador contiene: creación de usuario.
+
+8.Descripción de vistas:
+-Catálogo de canchas: En lista todas las canchas disponibles en el sistema para hacer reservas, esta vista es general y no requiere ningún tipo de acceso especial, sin embargo, el rol administrador podrá acceder a un menú contextual para editarlas y a un botón para crear nuevas.
+-Calendario de Cancha: Se despliega al seleccionar una cancha y muestra un calendario de en rango de un mes de forma interactivo para elegir un día en particular. Al rol administrador le permitirá acceder a un menú contextual para marcarlo como día fuera de servicio, y esta acción es reversible, es decir puede ser un siwtch.
+- Horas del día: Se despliega al seleccionar un día particular del calendario, muestra las horas en el rango de disponibilidad y si están disponibles el cliente podrá seleccionar las que desea reservar.
+-Formulario para una reserva: Se despliega al usar un botón en la vista de las horas, contiene campos para ingresar, documento, nombre. Teléfono del cliente que va a reservar, así como un pequeño apartado donde muestra las horas seleccionadas como confirmación.
+-Creación de usuario (Administrador/Encargado): Un panel reservado para la creación de un usuario pudiendo seleccionar el rol, nombre y contraseña, en general sus acciones son CRUD.
+-Inicio de sesión (Administrador/Encargado): Permite ingresar el nombre de usuario y la contraseña para ingresar como administrador u Encargado.
+-Reservas: Enlista todas las reservas registradas con ordenamiento por fecha más reciente (ordenamiento provisional), el rol administrador tendrá un acceso a unas opciones (CRUD) para cada reserva, cada una de ellas mostrará los datos relevantes, datos de cliente y horas reservadas, así como su estado actual.
+-Reservas del día: Se despliega desde un usuario administrador u Encargado en el calendario de cancha, enlista todas las reservas del día seleccionado, con las mismas opciones para el Administrador que la vista Reservas
+-Mis reservas: se despliega desde el Home en la vista cliente y enlista todas las reservas de ese cliente, en caso de ser la primera visita tiene un campo de texto para ingresar el documento y consultar las asociadas a ese documento suyo. Cada reserva mostrará los datos relevantes y tendrá su opción para solicitar cancelación.
+
+8.Aspectos visuales:
+Colores cálidos pastel sin temas contemplados de momento.
+Contemplar de referencia las dimensiones del iphone 17 pro max para el viewport.
+Añadir todo el CSS necesario para que el estilo y maquetado quede acorde a lo necesitado y a Material UI design.
+No usar imágenes en las vistas solo en las tarjetas del catálog de canchas.
+No se usaran banners de marca en las vistas con los encabezados de las vistas es suficiente.
+9.Aspectos generales.
+Ya que no hay un rol de usuario cliente no queremos mostrar el login (inicio de sesión) al cliente, sería una URL para el Admin y otro para el cliente.
+
+10.Aspectos que no se contemplarán, restricciones y limitaciones.
+No se implementará pasarela de pago en línea, el control de pago sigue siendo tradicional Nequi/Efectivo según convenga al cliente. El sistema no maneja sistemas de pagos, solo se limita a mostrar el costo de la reserva calculando la cantidad de horas seleccionadas en la vista “Hacer Reserva”
+No se incluirá un chat interno entre los distintos perfiles que operen el aplicativo.
+No se contemplarán manejo de turnos Administrador, Encargado.
+No se tiene pensado hacerlo una App Nativa de un sistema operativo, las herramientas tecnológicas que más utiliza el negocio son los teléfonos inteligentes.
+Limitarse a agregar solo los elementos mencionados en esta guía, ningún elemento más que requiera la creación de más entidades lógicas, el alcance del proyecto es extremadamente moderado. No se toleran añadiduras de conceptos o funcionalidades adicionales que exijan una entidad nueva para la base de datos final, tampoco ninguna vista adicional a las que ya se enlistaron previamente, ninguna de ellas se definió como una ventana modal, solo los menús contextuales pueden seguir ese criterio.
+Los eventos asociados a los casos de uso derivados de este proyecto no requieren de una lógica compleja de notificaciones o sockets.
+De momento no es necesaria la inclusión de una marca, dejar esto fuera del alcance del proyecto
+
+Criterios De Aceptación
+El sistema no permite el solapamiento de las horas reservadas en una misma cancha durante cualquier reserva.
+El cliente puede visualizar directamente la disponibilidad y precio del alquiler de las canchas sin requerir contactar con el administrador.
+Tanto el administrador como el encargado están al día con el estado y flujo de las reservas, aunque su nivel de operatividad de la App será asimétrico.
 

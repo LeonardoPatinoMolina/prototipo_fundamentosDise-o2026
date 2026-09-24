@@ -21,57 +21,36 @@
   }
 
   const DEFAULT_DATA = {
-    users: [
-      { id: 'u-admin', username: 'admin', password: 'admin123', role: 'Administrador', name: 'Administrador Principal', state: 'Activo' },
-      { id: 'u-encargado', username: 'encargado', password: 'encargado123', role: 'Encargado', name: 'Encargado', state: 'Activo' }
-    ],
-    courts: [
-      { id: 'c1', name: 'Cancha Sintética 1', image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80', price: 60000, available: true },
-      { id: 'c2', name: 'Cancha Sintética 2', image: 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?auto=format&fit=crop&w=600&q=80', price: 70000, available: true }
-    ],
-    reservations: [
-      {
-        id: 'r-demo-1',
-        courtId: 'c1',
-        courtName: 'Cancha Sintética 1',
-        date: '2026-09-28',
-        hours: ['18:00 - 19:00', '19:00 - 20:00'],
-        clientName: 'Carlos Mendoza',
-        document: '1012345678',
-        phone: '3001234567',
-        status: 'Pendiente por aprobación',
-        total: 120000,
-        cancelRequested: false
-      },
-      {
-        id: 'r-demo-2',
-        courtId: 'c1',
-        courtName: 'Cancha Sintética 1',
-        date: '2026-09-25',
-        hours: ['20:00 - 21:00'],
-        clientName: 'Juan Pérez',
-        document: '80123456',
-        phone: '3105551234',
-        status: 'Reservada',
-        total: 60000,
-        cancelRequested: false
-      },
-      {
-        id: 'r-demo-3',
-        courtId: 'c2',
-        courtName: 'Cancha Sintética 2',
-        date: '2026-09-23',
-        hours: ['17:00 - 18:00'],
-        clientName: 'Miguel Rodríguez',
-        document: '1023456789',
-        phone: '3204445566',
-        status: 'En curso',
-        total: 70000,
-        cancelRequested: false
-      }
-    ],
+    users: [],
+    courts: [],
+    reservations: [],
     outOfServiceDates: {}
   };
+
+  let loadedDefaultData = null;
+
+  function loadDefaultData() {
+    try {
+      const request = new XMLHttpRequest();
+      request.open('GET', 'appsettings.json', false);
+      request.send(null);
+
+      if (request.status === 200 && request.responseText) {
+        const settings = JSON.parse(request.responseText);
+        if (settings && typeof settings === 'object') {
+          loadedDefaultData = settings;
+        }
+      }
+    } catch (error) {
+      loadedDefaultData = null;
+    }
+  }
+
+  function getDefaultData() {
+    return clone(loadedDefaultData || DEFAULT_DATA);
+  }
+
+  loadDefaultData();
 
   function clone(value) {
     return JSON.parse(JSON.stringify(value));
@@ -79,22 +58,24 @@
 
   function ensureData() {
     const current = localStorage.getItem(STORAGE_KEY);
+    const seedData = getDefaultData();
+
     if (!current) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_DATA));
-      return clone(DEFAULT_DATA);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(seedData));
+      return clone(seedData);
     }
 
     try {
       const parsed = JSON.parse(current);
       return {
-        users: Array.isArray(parsed.users) && parsed.users.length ? parsed.users : clone(DEFAULT_DATA.users),
-        courts: Array.isArray(parsed.courts) && parsed.courts.length ? parsed.courts : clone(DEFAULT_DATA.courts),
-        reservations: Array.isArray(parsed.reservations) ? parsed.reservations : clone(DEFAULT_DATA.reservations),
-        outOfServiceDates: parsed.outOfServiceDates || {}
+        users: Array.isArray(parsed.users) && parsed.users.length ? parsed.users : clone(seedData.users),
+        courts: Array.isArray(parsed.courts) && parsed.courts.length ? parsed.courts : clone(seedData.courts),
+        reservations: Array.isArray(parsed.reservations) ? parsed.reservations : clone(seedData.reservations),
+        outOfServiceDates: parsed.outOfServiceDates || clone(seedData.outOfServiceDates || {})
       };
     } catch (error) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_DATA));
-      return clone(DEFAULT_DATA);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(seedData));
+      return clone(seedData);
     }
   }
 

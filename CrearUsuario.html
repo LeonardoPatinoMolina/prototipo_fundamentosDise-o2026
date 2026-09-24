@@ -255,7 +255,7 @@
       <section class="form-card">
         <h2>Datos del Nuevo Usuario</h2>
 
-        <form id="createUserForm" onsubmit="handleCreateUser(event)">
+        <form id="createUserForm">
           <!-- Nombre de usuario -->
           <div class="form-group" style="margin-bottom: 12px;">
             <label for="username">Usuario (Login) *</label>
@@ -314,22 +314,6 @@
     </main>
   </div>
 
-  <script>
-    // function handleCreateUser(event) {
-    //   event.preventDefault();
-      
-    //   const username = document.getElementById('username').value;
-    //   const fullName = document.getElementById('fullName').value;
-    //   const role = document.querySelector('input[name="userRole"]:checked').value;
-    //   const state = document.getElementById('userState').value;
-      
-    //   alert(`¡Usuario creado exitosamente!\n\nUsuario: ${username}\nNombre: ${fullName}\nRol: ${role}\nEstado: ${state}`);
-    // }
-    function handleCreateUser(event) {
-      event.preventDefault();
-      alert('Usuario creado exitosamente');
-      window.location.href = "HomeAdmin.html";
-    }
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>

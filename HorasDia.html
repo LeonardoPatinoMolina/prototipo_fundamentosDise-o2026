@@ -301,22 +301,22 @@
       <!-- Listado de franjas de 6am a 10pm (Horas enteras) -->
       <section class="hours-card">
         <div class="hours-grid">
-          <div class="hour-chip" data-hour="06:00 - 07:00" onclick="toggleHour(this)">06:00 - 07:00</div>
-          <div class="hour-chip" data-hour="07:00 - 08:00" onclick="toggleHour(this)">07:00 - 08:00</div>
+          <div class="hour-chip" data-hour="06:00 - 07:00">06:00 - 07:00</div>
+          <div class="hour-chip" data-hour="07:00 - 08:00">07:00 - 08:00</div>
           <div class="hour-chip occupied" title="Hora reservada por otro cliente">08:00 - 09:00</div>
-          <div class="hour-chip" data-hour="09:00 - 10:00" onclick="toggleHour(this)">09:00 - 10:00</div>
-          <div class="hour-chip" data-hour="10:00 - 11:00" onclick="toggleHour(this)">10:00 - 11:00</div>
+          <div class="hour-chip" data-hour="09:00 - 10:00">09:00 - 10:00</div>
+          <div class="hour-chip" data-hour="10:00 - 11:00">10:00 - 11:00</div>
           <div class="hour-chip occupied" title="Hora reservada por otro cliente">11:00 - 12:00</div>
-          <div class="hour-chip" data-hour="12:00 - 13:00" onclick="toggleHour(this)">12:00 - 13:00</div>
-          <div class="hour-chip" data-hour="13:00 - 14:00" onclick="toggleHour(this)">13:00 - 14:00</div>
-          <div class="hour-chip" data-hour="14:00 - 15:00" onclick="toggleHour(this)">14:00 - 15:00</div>
-          <div class="hour-chip" data-hour="15:00 - 16:00" onclick="toggleHour(this)">15:00 - 16:00</div>
-          <div class="hour-chip" data-hour="16:00 - 17:00" onclick="toggleHour(this)">16:00 - 17:00</div>
-          <div class="hour-chip" data-hour="17:00 - 18:00" onclick="toggleHour(this)">17:00 - 18:00</div>
-          <div class="hour-chip selected" data-hour="18:00 - 19:00" onclick="toggleHour(this)">18:00 - 19:00</div>
-          <div class="hour-chip selected" data-hour="19:00 - 20:00" onclick="toggleHour(this)">19:00 - 20:00</div>
-          <div class="hour-chip" data-hour="20:00 - 21:00" onclick="toggleHour(this)">20:00 - 21:00</div>
-          <div class="hour-chip" data-hour="21:00 - 22:00" onclick="toggleHour(this)">21:00 - 22:00</div>
+          <div class="hour-chip" data-hour="12:00 - 13:00">12:00 - 13:00</div>
+          <div class="hour-chip" data-hour="13:00 - 14:00">13:00 - 14:00</div>
+          <div class="hour-chip" data-hour="14:00 - 15:00">14:00 - 15:00</div>
+          <div class="hour-chip" data-hour="15:00 - 16:00">15:00 - 16:00</div>
+          <div class="hour-chip" data-hour="16:00 - 17:00">16:00 - 17:00</div>
+          <div class="hour-chip" data-hour="17:00 - 18:00">17:00 - 18:00</div>
+          <div class="hour-chip selected" data-hour="18:00 - 19:00">18:00 - 19:00</div>
+          <div class="hour-chip selected" data-hour="19:00 - 20:00">19:00 - 20:00</div>
+          <div class="hour-chip" data-hour="20:00 - 21:00">20:00 - 21:00</div>
+          <div class="hour-chip" data-hour="21:00 - 22:00">21:00 - 22:00</div>
         </div>
       </section>
 
@@ -337,34 +337,6 @@
     </main>
   </div>
 
-  <script>
-    const HOURLY_RATE = 60000;
-
-    function toggleHour(element) {
-      if (element.classList.contains('occupied')) return;
-      
-      element.classList.toggle('selected');
-      updateSummary();
-    }
-
-    function updateSummary() {
-      const selectedChips = document.querySelectorAll('.hour-chip.selected');
-      const count = selectedChips.length;
-      const total = count * HOURLY_RATE;
-
-      document.getElementById('selectedCountText').innerText = count + ' hora(s)';
-      document.getElementById('totalPriceText').innerText = '$' + total.toLocaleString('es-CO');
-
-      const btnContinue = document.getElementById('btnContinue');
-      if (count === 0) {
-        btnContinue.disabled = true;
-      } else {
-        btnContinue.disabled = false;
-      }
-    }
-
-    // Inicializar resumen en la carga
-    updateSummary();
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>

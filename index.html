@@ -385,8 +385,8 @@
 
     <!-- Navegación por pestañas del Home del Cliente -->
     <nav class="tab-nav">
-      <button class="tab-button active" onclick="switchTab('catalogo')">Catálogo de Canchas</button>
-      <button class="tab-button" onclick="switchTab('mis-reservas')">Mis Reservas</button>
+      <button class="tab-button active" type="button">Catálogo de Canchas</button>
+      <button class="tab-button" type="button">Mis Reservas</button>
     </nav>
 
     <!-- Contenido de las pestañas -->
@@ -442,7 +442,7 @@
             <label for="document-input">Número de Documento</label>
             <input type="text" id="document-input" class="form-control" placeholder="Ingrese su documento de identidad">
           </div>
-          <button class="btn-action" onclick="consultarReservas()">Consultar mis reservas</button>
+          <button class="btn-action" type="button">Consultar mis reservas</button>
         </div>
 
         <!-- Listado de reservas asociadas -->
@@ -496,32 +496,6 @@
     </main>
   </div>
 
-  <script>
-    // Cambio interactivo entre pestañas para el prototipo
-    function switchTab(tabName) {
-      const tabs = document.querySelectorAll('.tab-content');
-      const buttons = document.querySelectorAll('.tab-button');
-      
-      tabs.forEach(tab => tab.classList.remove('active'));
-      buttons.forEach(btn => btn.classList.remove('active'));
-
-      if (tabName === 'catalogo') {
-        document.getElementById('tab-catalogo').classList.add('active');
-        buttons[0].classList.add('active');
-      } else if (tabName === 'mis-reservas') {
-        document.getElementById('tab-mis-reservas').classList.add('active');
-        buttons[1].classList.add('active');
-      }
-    }
-
-    function consultarReservas() {
-      const doc = document.getElementById('document-input').value;
-      if (!doc) {
-        alert('Por favor ingrese su número de documento.');
-        return;
-      }
-      alert('Consultando reservas asociadas al documento: ' + doc);
-    }
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>

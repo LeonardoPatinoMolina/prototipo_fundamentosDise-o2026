@@ -7,6 +7,21 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <script>
+    (() => {
+      try {
+        const rawUser = localStorage.getItem('prototipo-current-user');
+        const user = rawUser ? JSON.parse(rawUser) : null;
+        const isAllowedUser = !!user && ['Administrador', 'Encargado'].includes(user.role);
+        if (!isAllowedUser) {
+          window.location.replace('InicioSesion.html');
+        }
+      } catch (error) {
+        window.location.replace('InicioSesion.html');
+      }
+    })();
+  </script>
   
   <style>
     :root {
@@ -324,22 +339,17 @@
     <!-- Encabezado Administrador / Encargado -->
     <header class="app-header">
       <div class="header-titles">
-        <h1>Panel de Gestión <span class="admin-badge">Admin</span></h1>
+        <h1>Panel de Gestión <span class="admin-badge" id="roleBadge">ADMIN</span></h1>
         <p>Administrador / Encargado</p>
       </div>
-      <!-- Opción de Inicio de Sesión / Cerrar Sesión -->
-      <!-- <button class="btn-login" onclick="alert('Redirigiendo a Inicio de Sesión')">Inicio de sesión</button> -->
-      <a href="InicioSesion.html" class="btn-login" style="text-decoration:none;">Inicio de sesión</a>
+      <a href="InicioSesion.html" class="btn-login" id="sessionActionLink" style="text-decoration:none;">Cerrar sesión</a>
     </header>
 
     <!-- Barra de acciones rápidas para Administrador -->
     <nav class="admin-toolbar">
-      <!-- <button class="btn-tool primary" onclick="alert('Navegando a Formulario Crear Cancha')"> ➕ Crear Cancha </button> -->
-       <a href="CrearCancha.html" class="btn-tool primary" style="text-decoration:none;">➕ Crear Cancha</a>
-      <!-- <button class="btn-tool" onclick="alert('Navegando a Creación de Usuario')"> 👤 Crear Usuario </button> -->
-       <a href="CrearUsuario.html" class="btn-tool" style="text-decoration:none;">👤 Crear Usuario</a>
-      <!-- <button class="btn-tool" onclick="alert('Navegando a Gestión de Reservas')"> 📋 Consultar Reservas </button> -->
-       <a href="ReservasAdmin.html" class="btn-tool" style="text-decoration:none;">📋 Consultar Reservas</a>
+      <a href="ReservasAdmin.html" class="btn-tool" style="text-decoration:none;">📋 Consultar Reservas</a>
+      <a href="CrearUsuario.html" class="btn-tool admin-only" style="text-decoration:none;">👤 Crear Usuario</a>
+      <a href="CrearCancha.html" class="btn-tool primary admin-only" style="text-decoration:none;">➕ Crear Cancha</a>
     </nav>
 
     <main class="content-area">
@@ -354,12 +364,12 @@
         
         <!-- Cancha 1 con Menú Contextual Admin -->
         <article class="court-card">
-          <button class="admin-menu-btn" onclick="toggleMenu('menu1')">⋮</button>
+          <button class="admin-menu-btn" type="button" data-menu="menu1">⋮</button>
           
           <!-- Menú Contextual CRUD -->
           <div class="context-menu" id="menu1">
-            <button class="context-option" onclick="alert('Editar datos de Cancha 1')">✏️ Editar Cancha</button>
-            <button class="context-option delete" onclick="alert('Eliminar Cancha 1')">🗑️ Eliminar</button>
+            <button class="context-option" type="button" data-action="edit" data-id="c1">✏️ Editar Cancha</button>
+            <button class="context-option delete" type="button" data-action="delete" data-id="c1">🗑️ Eliminar</button>
           </div>
 
           <img class="court-image" src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80" alt="Cancha Sintética 1">
@@ -373,18 +383,18 @@
               Precio: <span>$60.000</span> / hr
             </div>
             <!-- <button class="btn-action" onclick="alert('Ver Calendario y Reservas del día')">Consultar Disponibilidad / Día</button> -->
-             <a href="ReservasDia.html" class="btn-action" style="text-decoration:none; display:block;">Consultar Disponibilidad / Día</a>
+             <a href="CalendarioCancha.html?courtId=c1" class="btn-action" style="text-decoration:none; display:block;">Consultar Disponibilidad / Día</a>
           </div>
         </article>
 
         <!-- Cancha 2 con Menú Contextual Admin -->
         <article class="court-card">
-          <button class="admin-menu-btn" onclick="toggleMenu('menu2')">⋮</button>
+          <button class="admin-menu-btn" type="button" data-menu="menu2">⋮</button>
           
           <!-- Menú Contextual CRUD -->
           <div class="context-menu" id="menu2">
-            <button class="context-option" onclick="alert('Editar datos de Cancha 2')">✏️ Editar Cancha</button>
-            <button class="context-option delete" onclick="alert('Eliminar Cancha 2')">🗑️ Eliminar</button>
+            <button class="context-option" type="button" data-action="edit" data-id="c2">✏️ Editar Cancha</button>
+            <button class="context-option delete" type="button" data-action="delete" data-id="c2">🗑️ Eliminar</button>
           </div>
 
           <img class="court-image" src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?auto=format&fit=crop&w=600&q=80" alt="Cancha Sintética 2">
@@ -398,7 +408,7 @@
               Precio: <span>$70.000</span> / hr
             </div>
             <!-- <button class="btn-action" onclick="alert('Ver Calendario y Reservas del día')">Consultar Disponibilidad / Día</button> -->
-             <a href="ReservasDia.html" class="btn-action" style="text-decoration:none; display:block;">Consultar Disponibilidad / Día</a>
+             <a href="CalendarioCancha.html?courtId=c2" class="btn-action" style="text-decoration:none; display:block;">Consultar Disponibilidad / Día</a>
           </div>
         </article>
 
@@ -407,27 +417,6 @@
     </main>
   </div>
 
-  <script>
-    function toggleMenu(menuId) {
-      // Cerrar otros menús abiertos
-      document.querySelectorAll('.context-menu').forEach(menu => {
-        if (menu.id !== menuId) {
-          menu.classList.remove('active');
-        }
-      });
-      
-      const targetMenu = document.getElementById(menuId);
-      targetMenu.classList.toggle('active');
-    }
-
-    // Cerrar menús al hacer clic fuera
-    document.addEventListener('click', function(event) {
-      if (!event.target.classList.contains('admin-menu-btn')) {
-        document.querySelectorAll('.context-menu').forEach(menu => {
-          menu.classList.remove('active');
-        });
-      }
-    });
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>

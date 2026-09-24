@@ -302,7 +302,7 @@
       <section class="form-card">
         <h2>Datos del Cliente</h2>
         
-        <form id="reservationForm" onsubmit="confirmReservation(event)">
+        <form id="reservationForm">
           <div class="form-group" style="margin-bottom: 12px;">
             <label for="clientDocument">Número de Documento *</label>
             <input type="text" id="clientDocument" class="form-control" placeholder="Ej. 1012345678" required>
@@ -331,21 +331,6 @@
     </main>
   </div>
 
-  <script>
-    // function confirmReservation(event) {
-    //   event.preventDefault();
-      
-    //   const doc = document.getElementById('clientDocument').value;
-    //   const name = document.getElementById('clientName').value;
-      
-    //   alert(`¡Solicitud enviada con éxito!\n\nCliente: ${name}\nDocumento: ${doc}\nEstado: Pendiente por aprobación`);
-    // }
-
-    function confirmReservation(event) {
-    event.preventDefault();
-    alert('Solicitud enviada con éxito');
-    window.location.href = "index.html";
-    }
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>

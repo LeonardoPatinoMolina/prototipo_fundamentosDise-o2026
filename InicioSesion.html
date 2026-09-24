@@ -194,8 +194,7 @@
   <div class="app-container">
     
     <header class="app-header">
-      <!-- <button class="btn-back" onclick="alert('Volver a la vista principal')">←</button> -->
-       <a href="HomeAdmin.html" class="btn-back">←</a>
+      <a href="index.html" class="btn-back">←</a>
       <div class="header-titles">
         <h1>Acceso Administrativo</h1>
         <p>Sistema de Gestión de Canchas</p>
@@ -210,7 +209,7 @@
           <p>Ingresa tus credenciales de Administrador o Encargado</p>
         </div>
 
-        <form id="loginForm" onsubmit="handleLogin(event)">
+        <form id="loginForm">
           <div class="form-group" style="margin-bottom: 14px;">
             <label for="username">Usuario *</label>
             <input type="text" id="username" class="form-control" placeholder="Nombre de usuario" required>
@@ -230,20 +229,6 @@
     </main>
   </div>
 
-  <script>
-    // function handleLogin(event) {
-    //   event.preventDefault();
-      
-    //   const user = document.getElementById('username').value;
-      
-    //   alert(`Sesión iniciada correctamente como: ${user}\nRedirigiendo a Home Administrador...`);
-    // }
-
-    function handleLogin(event) {
-      event.preventDefault();
-      alert('Sesión iniciada correctamente');
-      window.location.href = "HomeAdmin.html";
-    }
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>

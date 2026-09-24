@@ -283,7 +283,7 @@
       <section class="form-card">
         <h2>Detalles de la Cancha</h2>
 
-        <form id="createCourtForm" onsubmit="handleCreateCourt(event)">
+        <form id="createCourtForm">
           <!-- Nombre de la cancha -->
           <div class="form-group" style="margin-bottom: 12px;">
             <label for="courtName">Nombre de la Cancha *</label>
@@ -299,7 +299,7 @@
           <!-- URL de la Imagen -->
           <div class="form-group" style="margin-bottom: 12px;">
             <label for="imageUrl">URL de la Imagen *</label>
-            <input type="url" id="imageUrl" class="form-control" placeholder="https://ejemplo.com/imagen.jpg" oninput="updateImagePreview(this.value)" required>
+            <input type="url" id="imageUrl" class="form-control" placeholder="https://ejemplo.com/imagen.jpg" required>
             
             <div class="image-preview" id="imagePreviewContainer">
               <p id="previewText">Vista previa de la imagen</p>
@@ -333,36 +333,6 @@
     </main>
   </div>
 
-  <script>
-    function updateImagePreview(url) {
-      const previewImg = document.getElementById('previewImg');
-      const previewText = document.getElementById('previewText');
-      
-      if (url.trim() !== '') {
-        previewImg.src = url;
-        previewImg.style.display = 'block';
-        previewText.style.display = 'none';
-      } else {
-        previewImg.style.display = 'none';
-        previewText.style.display = 'block';
-      }
-    }
-
-    // function handleCreateCourt(event) {
-    //   event.preventDefault();
-      
-    //   const name = document.getElementById('courtName').value;
-    //   const price = document.getElementById('hourlyRate').value;
-    //   const isAvailable = document.getElementById('courtAvailable').checked ? 'Disponible' : 'No disponible';
-      
-    //   alert(`¡Cancha creada con éxito!\n\nNombre: ${name}\nPrecio por hora: $${Number(price).toLocaleString('es-CO')}\nEstado: ${isAvailable}`);
-    // }
-
-    function handleCreateCourt(event) {
-      event.preventDefault();
-      alert('Cancha creada con éxito');
-      window.location.href = "HomeAdmin.html";
-    }
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>

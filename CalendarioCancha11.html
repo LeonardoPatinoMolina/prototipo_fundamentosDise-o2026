@@ -4,20 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calendario de Cancha - Reserva de Canchas</title>
-  
-  <!-- Fuente Google Roboto -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   
-  <!-- Estilo Flatpickr Base y Localización Español -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="https://npmcdn.flatpickr/dist/l10n/es.js"></script>
-  
-
-  <!-- Estilo Unificado del Proyecto -->
-  <!-- <link rel="stylesheet" href="style.css"> -->
   <style>
     :root {
       --bg-primary: #fdf8f5;
@@ -333,169 +323,6 @@
       color: var(--text-muted);
       cursor: not-allowed;
     }
-    /* Personalización visual de Flatpickr según Paleta Pastel del Proyecto */
-    #calendario-inline,
-    .flatpickr-calendar.inline,
-    .flatpickr-calendar,
-    .flatpickr-wrapper,
-    .flatpickr-rContainer,
-    .flatpickr-innerContainer {
-      width: 100% !important;
-      max-width: 100% !important;
-      min-width: 0;
-    }
-    .flatpickr-rContainer{
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-    }
-
-    .flatpickr-calendar.inline {
-      background-color: var(--surface-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      box-shadow: var(--elevation-1);
-      padding: 10px;
-      box-sizing: border-box;
-    }
-
-    .flatpickr-months {
-      background-color: var(--primary-light);
-      border-radius: var(--radius-sm);
-      padding: 6px 0;
-      margin-bottom: 8px;
-      display:flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-    }
-
-    .flatpickr-months .flatpickr-month {
-      color: var(--primary-dark);
-      font-weight: 700;
-    }
-
-    .flatpickr-current-month .flatpickr-monthDropdown-months {
-      font-weight: 700;
-    }
-
-    .flatpickr-months .flatpickr-prev-month, 
-    .flatpickr-months .flatpickr-next-month {
-      fill: var(--primary-dark);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    span.flatpickr-weekdays {
-      color: var(--primary-dark);
-      font-weight: 700;
-      font-size: 0.85rem;
-    }
-    /* .flatpickr-weekdays {
-    background-color: blue;
-    /* align-content: center; 
-  } */
-
-    .flatpickr-day {
-      border-radius: 50% !important;
-      color: var(--text-main);
-      font-weight: 500;
-    }
-
-    .flatpickr-day.today {
-      border-color: var(--primary) !important;
-      color: var(--primary);
-    }
-
-    .flatpickr-day.selected, 
-    .flatpickr-day.selected:hover {
-      background: var(--primary) !important;
-      border-color: var(--primary) !important;
-      color: #ffffff !important;
-      font-weight: 700;
-    }
-
-    .flatpickr-day.flatpickr-disabled, 
-    .flatpickr-day.flatpickr-disabled:hover {
-      color: #e0e0e0 !important;
-    }
-
-    /* Modificador personalizado para días marcados "Fuera de servicio" */
-    .flatpickr-day.out-of-service-day {
-      background-color: #f5f5f5 !important;
-      color: #bdbdbd !important;
-      text-decoration: line-through;
-    }
-
-    .calendar-container-card {
-      background-color: var(--surface-card);
-      border-radius: var(--radius-md);
-      padding: 16px;
-      box-shadow: var(--elevation-1);
-      border: 1px solid var(--border-color);
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .admin-controls {
-      background-color: var(--primary-light);
-      padding: 12px 16px;
-      border-radius: var(--radius-sm);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border: 1px dashed var(--primary);
-    }
-
-    .admin-controls span {
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--primary-dark);
-    }
-
- 
-
-
-
-    /* Contenedor general de los días */
-/* .flatpickr-days{
-
-  background-color: red;
-
-} */
-.flatpickr-days,
-    .dayContainer {
-      /* width: 100% !important; */
-      display: flex;
-      justify-content: center;
-    }
-
-    /* Contenedor interno de los días */
-    .dayContainer {
-      display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 6px;
-      justify-items: center;
-      align-items: stretch;
-      width: 100% !important;
-    }
-
-    /* Estilo de cada día */
-    .flatpickr-day {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100% !important;
-      max-width: 42px;
-      height: 42px;
-      min-height: 42px;
-      border-radius: 50%;
-      margin: 0 auto;
-      box-sizing: border-box;
-    }
-
   </style>
 </head>
 <body>
@@ -503,6 +330,7 @@
   <div class="app-container">
     
     <header class="app-header">
+      <!-- <button class="btn-back" onclick="alert('Volver al Catálogo')">←</button> -->
       <a href="index.html" class="btn-back">←</a>
       <div class="header-titles">
         <h1>Cancha Sintética 1</h1>
@@ -512,11 +340,74 @@
 
     <main class="content-area">
       
-      <section class="calendar-container-card">
-        <!-- Contenedor donde Flatpickr renderiza el datepicker inline -->
-        <div id="calendario-inline"></div>
+      <!-- Datepicker interactivo con rango del 23/09/2026 al 23/10/2026 -->
+      <section class="calendar-card">
+        <div class="calendar-header">
+          <button class="nav-month-btn" id="prevBtn" onclick="changeMonth(-1)">&lt; Sep</button>
+          <h2 id="monthTitle">Septiembre 2026</h2>
+          <button class="nav-month-btn" id="nextBtn" onclick="changeMonth(1)">Oct &gt;</button>
+        </div>
 
-        <!-- Menú contextual para Administrador/Encargado: Marcar día fuera de servicio -->
+        <div class="calendar-grid">
+          <div class="day-name">Dom</div>
+          <div class="day-name">Lun</div>
+          <div class="day-name">Mar</div>
+          <div class="day-name">Mié</div>
+          <div class="day-name">Jue</div>
+          <div class="day-name">Vie</div>
+          <div class="day-name">Sáb</div>
+
+          <!-- Muestra dinámicamente según el mes seleccionado -->
+          <div id="calendarDays" style="display: contents;">
+            <!-- Días deshabilitados (Pasados) -->
+            <div class="day-cell empty"></div>
+            <div class="day-cell empty"></div>
+            <div class="day-cell disabled">1</div>
+            <div class="day-cell disabled">2</div>
+            <div class="day-cell disabled">3</div>
+            <div class="day-cell disabled">4</div>
+            <div class="day-cell disabled">5</div>
+            
+            <div class="day-cell disabled">6</div>
+            <div class="day-cell disabled">7</div>
+            <div class="day-cell disabled">8</div>
+            <div class="day-cell disabled">9</div>
+            <div class="day-cell disabled">10</div>
+            <div class="day-cell disabled">11</div>
+            <div class="day-cell disabled">12</div>
+            
+            <div class="day-cell disabled">13</div>
+            <div class="day-cell disabled">14</div>
+            <div class="day-cell disabled">15</div>
+            <div class="day-cell disabled">16</div>
+            <div class="day-cell disabled">17</div>
+            <div class="day-cell disabled">18</div>
+            <div class="day-cell disabled">19</div>
+            
+            <div class="day-cell disabled">20</div>
+            <div class="day-cell disabled">21</div>
+            <div class="day-cell disabled">22</div>
+            
+            <!-- Hoy (23 Sep 2026) y días habilitados del mes -->
+            <div class="day-cell available selected" onclick="selectDate(this, '23/09/2026')">23</div>
+            <div class="day-cell available" onclick="selectDate(this, '24/09/2026')">24</div>
+            <div class="day-cell available" onclick="selectDate(this, '25/09/2026')">25</div>
+            <div class="day-cell available" onclick="selectDate(this, '26/09/2026')">26</div>
+            
+            <div class="day-cell available" onclick="selectDate(this, '27/09/2026')">27</div>
+            <div class="day-cell available" onclick="selectDate(this, '28/09/2026')">28</div>
+            <div class="day-cell out-of-service" title="Día fuera de servicio">29</div>
+            <div class="day-cell available" onclick="selectDate(this, '30/09/2026')">30</div>
+          </div>
+        </div>
+
+        <div class="calendar-legend">
+          <div class="legend-item"><span class="dot available"></span> Disponible</div>
+          <div class="legend-item"><span class="dot selected"></span> Seleccionado</div>
+          <div class="legend-item"><span class="dot out-of-service"></span> Fuera de servicio</div>
+        </div>
+
+        <!-- Menú contextual Administrador: Marcar día fuera de servicio -->
         <div class="admin-controls">
           <span>Día fuera de servicio (Admin)</span>
           <label class="switch">
@@ -526,70 +417,54 @@
         </div>
       </section>
 
-      <!-- Confirmación de selección y paso a la vista de Horas del Día -->
-      <section class="form-card">
-        <div style="font-size: 0.9rem; color: var(--primary-dark);">
-          Fecha seleccionada: <strong id="selectedDateDisplay">Ninguna</strong>
+      <!-- Confirmación de fecha elegida y paso a "Horas del día" -->
+      <section class="selection-summary">
+        <div class="summary-text">
+          Fecha seleccionada: <strong id="selectedDateDisplay">23/09/2026</strong>
         </div>
-        <button class="btn-action" id="btnNext" disabled onclick="irASiguienteVista()">
-          Ver horas disponibles
-        </button>
+        <!-- <button class="btn-action" id="btnNext" onclick="alert('Navegando a la vista Horas del Día')"> Ver horas disponibles </button> -->
+         <a href="HorasDia.html" class="btn-action" style="text-decoration:none; text-align:center; display:block;">Ver horas disponibles</a>
       </section>
 
     </main>
   </div>
 
   <script>
-    let fechaSeleccionadaStr = "";
+    let selectedDate = '23/09/2026';
 
-    // Configuración de Flatpickr con los settings requeridos
-    const hoy = new Date();
-    const unMesDespues = new Date();
-    unMesDespues.setMonth(hoy.getMonth() + 1);
-
-    const fp = flatpickr("#calendario-inline", {
-      inline: true,
-      locale: {
-        firstDayOfWeek: 1,
-        weekdays: {
-          shorthand: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-          longhand: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],         
-        }, 
-        months: {
-          shorthand: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Оct', 'Nov', 'Dic'],
-          longhand: ['Enero', 'Febreo', 'Мarzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-        },
-      }, 
-      dateFormat: "Y-m-d",
-      minDate: "today",
-      maxDate: unMesDespues,
-      
-      onChange: function(selectedDates, dateStr, instance) {
-        fechaSeleccionadaStr = dateStr;
-        document.getElementById('selectedDateDisplay').innerText = dateStr;
-        document.getElementById('btnNext').disabled = false;
-      }
-    });
-
-    function irASiguienteVista() {
-      if (fechaSeleccionadaStr) {
-        window.location.href = "HorasDia.html?fecha=" + fechaSeleccionadaStr;
-      }
+    function selectDate(element, dateStr) {
+      document.querySelectorAll('.day-cell').forEach(cell => {
+        if(!cell.classList.contains('out-of-service') && !cell.classList.contains('disabled') && !cell.classList.contains('empty')) {
+          cell.classList.remove('selected');
+        }
+      });
+      element.classList.add('selected');
+      selectedDate = dateStr;
+      document.getElementById('selectedDateDisplay').innerText = dateStr;
+      document.getElementById('btnNext').disabled = false;
     }
 
     function toggleOutOfService(isChecked) {
-      if (!fechaSeleccionadaStr) {
-        alert("Por favor seleccione un día en el calendario primero.");
-        document.getElementById('outOfServiceSwitch').checked = !isChecked;
-        return;
-      }
-
       if (isChecked) {
-        alert("El día " + fechaSeleccionadaStr + " ha sido marcado como Fuera de Servicio.");
+        alert('El día ' + selectedDate + ' ha sido marcado como Fuera de Servicio.');
       } else {
-        alert("El día " + fechaSeleccionadaStr + " ha sido habilitado nuevamente.");
+        alert('El día ' + selectedDate + ' ha sido rehabilitado.');
+      }
+    }
+
+    function changeMonth(direction) {
+      // Simulación de cambio de mes respetando el rango de 1 mes (Sep 2026 -> Oct 2026)
+      if (direction === 1) {
+        document.getElementById('monthTitle').innerText = 'Octubre 2026';
+        document.getElementById('prevBtn').style.display = 'block';
+        document.getElementById('nextBtn').style.display = 'none';
+      } else {
+        document.getElementById('monthTitle').innerText = 'Septiembre 2026';
+        document.getElementById('prevBtn').style.display = 'none';
+        document.getElementById('nextBtn').style.display = 'block';
       }
     }
   </script>
+  <script src="app.js"></script>
 </body>
 </html>

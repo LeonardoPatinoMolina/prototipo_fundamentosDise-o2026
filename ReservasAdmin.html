@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Reservas - Administrador</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #fdf8f5;
+      --surface-card: #ffffff;
+      --primary: #e07a5f;
+      --primary-light: #f4f1de;
+      --primary-dark: #3d405b;
+      --secondary: #81b29a;
+      --accent: #f2cc8f;
+      
+      --status-pending: #f2cc8f;
+      --status-reserved: #81b29a;
+      --status-in-progress: #3d405b;
+      --status-canceled: #e07a5f;
+
+      --text-main: #2b2d42;
+      --text-muted: #6c757d;
+      --border-color: #f0e6df;
+      
+      --elevation-1: 0 2px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.1);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 0;
+    }
+    a.btn-action, a.btn-tool, a.btn-back {
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+    .app-container {
+      width: 100%;
+      max-width: 430px;
+      background-color: var(--bg-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding: 20px 0;
+      }
+      .app-container {
+        max-width: 768px;
+        min-height: calc(100vh - 40px);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+      }
+    }
+
+    /* Encabezado */
+    .app-header {
+      padding: 16px 20px;
+      background-color: var(--primary-dark);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .btn-back {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+
+    .header-titles h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .header-titles p {
+      font-size: 0.75rem;
+      opacity: 0.8;
+    }
+
+    /* Contenido */
+    .content-area {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .order-indicator {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background-color: var(--primary-light);
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    /* Tarjetas de Reservas */
+    .reservation-card {
+      background-color: var(--surface-card);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--elevation-1);
+      border-left: 5px solid var(--primary-dark);
+      border-top: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .reservation-card.pending {
+      border-left-color: var(--status-pending);
+    }
+
+    .reservation-card.reserved {
+      border-left-color: var(--status-reserved);
+    }
+
+    .reservation-card.in-progress {
+      border-left-color: var(--status-in-progress);
+    }
+
+    .reservation-card.canceled {
+      border-left-color: var(--status-canceled);
+    }
+
+    .res-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .res-court {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .res-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .res-badge.pending {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    .res-badge.reserved {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .res-badge.in-progress {
+      background-color: #d1ecf1;
+      color: #0c5460;
+    }
+
+    .res-badge.canceled {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .res-info {
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      color: var(--text-main);
+    }
+
+    .client-box {
+      background-color: var(--bg-primary);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      font-size: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    /* Acciones del Administrador en cada reserva */
+    .admin-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border-color);
+    }
+
+    .btn-approve {
+      flex: 1;
+      background-color: var(--secondary);
+      color: #ffffff;
+      border: none;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-cancel-req {
+      flex: 1;
+      background-color: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-danger {
+      background-color: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <header class="app-header">
+      <!-- <button class="btn-back" onclick="alert('Volver a Home Administrador')">←</button> -->
+       <a href="HomeAdmin.html" class="btn-back">←</a>
+      <div class="header-titles">
+        <h1>Gestión de Reservas</h1>
+        <p>Listado general del sistema</p>
+      </div>
+    </header>
+
+    <main class="content-area">
+      
+      <div class="section-header">
+        <span class="section-title">Todas las Reservas</span>
+        <span class="order-indicator">📅 Más recientes primero</span>
+      </div>
+
+      <!-- Reserva 1: Pendiente por Aprobación (Fecha más reciente) -->
+      <article class="reservation-card pending">
+        <div class="res-top">
+          <div>
+            <div class="res-court">Cancha Sintética 1</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">28 de Septiembre, 2026</div>
+          </div>
+          <span class="res-badge pending">Pendiente por aprobación</span>
+        </div>
+
+        <div class="res-info">
+          <div><strong>Horas:</strong> 18:00 - 19:00, 19:00 - 20:00 (2 hrs)</div>
+          <div><strong>Total:</strong> $120.000</div>
+          
+          <!-- Datos del cliente -->
+          <div class="client-box">
+            <div>👤 <strong>Cliente:</strong> Carlos Mendoza</div>
+            <div>📄 <strong>Doc:</strong> 1012345678</div>
+            <div>📞 <strong>Tel:</strong> 3001234567</div>
+          </div>
+        </div>
+
+        <!-- Opciones CRUD / Aprobación para Administrador -->
+        <div class="admin-actions">
+          <button class="btn-approve" onclick="alert('Reserva aprobada con éxito')">✓ Aprobar Reserva</button>
+          <button class="btn-danger" onclick="alert('Reserva rechazada/cancelada')">Aprobar Cancelación</button>
+        </div>
+      </article>
+
+      <!-- Reserva 2: Solicitud de Cancelación de Reserva Pendiente -->
+      <article class="reservation-card pending">
+        <div class="res-top">
+          <div>
+            <div class="res-court">Cancha Sintética 2</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">26 de Septiembre, 2026</div>
+          </div>
+          <span class="res-badge pending">Solicitud Cancelación</span>
+        </div>
+
+        <div class="res-info">
+          <div><strong>Horas:</strong> 15:00 - 16:00 (1 hr)</div>
+          <div><strong>Total:</strong> $70.000</div>
+          
+          <div class="client-box">
+            <div>👤 <strong>Cliente:</strong> Andrea Gómez</div>
+            <div>📄 <strong>Doc:</strong> 1098765432</div>
+            <div>📞 <strong>Tel:</strong> 3159876543</div>
+          </div>
+        </div>
+
+        <div class="admin-actions">
+          <button class="btn-cancel-req" onclick="alert('Solicitud de cancelación aprobada')">✓ Confirmar Cancelación</button>
+        </div>
+      </article>
+
+      <!-- Reserva 3: Estado Reservada -->
+      <article class="reservation-card reserved">
+        <div class="res-top">
+          <div>
+            <div class="res-court">Cancha Sintética 1</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">25 de Septiembre, 2026</div>
+          </div>
+          <span class="res-badge reserved">Reservada</span>
+        </div>
+
+        <div class="res-info">
+          <div><strong>Horas:</strong> 20:00 - 21:00 (1 hr)</div>
+          <div><strong>Total:</strong> $60.000</div>
+          
+          <div class="client-box">
+            <div>👤 <strong>Cliente:</strong> Juan Pérez</div>
+            <div>📄 <strong>Doc:</strong> 80123456</div>
+            <div>📞 <strong>Tel:</strong> 3105551234</div>
+          </div>
+        </div>
+
+        <div class="admin-actions">
+          <button class="btn-danger" style="width: 100%;" onclick="alert('Reserva cancelada por el Administrador')">Cancelar Reserva</button>
+        </div>
+      </article>
+
+      <!-- Reserva 4: Estado En Curso -->
+      <article class="reservation-card in-progress">
+        <div class="res-top">
+          <div>
+            <div class="res-court">Cancha Sintética 2</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">23 de Septiembre, 2026 (Hoy)</div>
+          </div>
+          <span class="res-badge in-progress">En curso</span>
+        </div>
+
+        <div class="res-info">
+          <div><strong>Horas:</strong> 17:00 - 18:00 (1 hr)</div>
+          <div><strong>Total:</strong> $70.000</div>
+          
+          <div class="client-box">
+            <div>👤 <strong>Cliente:</strong> Miguel Rodríguez</div>
+            <div>📄 <strong>Doc:</strong> 1023456789</div>
+            <div>📞 <strong>Tel:</strong> 3204445566</div>
+          </div>
+        </div>
+      </article>
+
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Administrador - Gestión de Canchas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #fdf8f5;
+      --surface-card: #ffffff;
+      --primary: #e07a5f;
+      --primary-light: #f4f1de;
+      --primary-dark: #3d405b;
+      --secondary: #81b29a;
+      --accent: #f2cc8f;
+      
+      --danger: #d9534f;
+      --text-main: #2b2d42;
+      --text-muted: #6c757d;
+      --border-color: #f0e6df;
+      
+      --elevation-1: 0 2px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.1);
+      --elevation-2: 0 4px 8px rgba(0,0,0,0.12);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 0;
+    }
+    a.btn-action, a.btn-tool, a.btn-back {
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+    .app-container {
+      width: 100%;
+      max-width: 430px;
+      background-color: var(--bg-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding: 20px 0;
+      }
+      .app-container {
+        max-width: 768px;
+        min-height: calc(100vh - 40px);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+      }
+    }
+
+    /* Encabezado Administrador */
+    .app-header {
+      padding: 16px 20px;
+      background-color: var(--primary-dark);
+      color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .admin-badge {
+      font-size: 0.7rem;
+      background-color: var(--primary);
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .header-titles h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-titles p {
+      font-size: 0.75rem;
+      opacity: 0.8;
+    }
+
+    .btn-login {
+      background-color: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: #ffffff;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-login:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Barra de Herramientas del Administrador */
+    .admin-toolbar {
+      background-color: var(--surface-card);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+    }
+
+    .btn-tool {
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 500;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-primary);
+      color: var(--primary-dark);
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-tool.primary {
+      background-color: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    /* Área de Contenido Principal */
+    .content-area {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 768px) {
+      .catalog-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* Tarjetas de Canchas con menú contextual Admin */
+    .court-card {
+      background-color: var(--surface-card);
+      border-radius: var(--radius-md);
+      box-shadow: var(--elevation-1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .court-image {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      background-color: var(--primary-light);
+    }
+
+    .court-info {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .court-title-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .court-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .status-badge {
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .status-badge.available {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .court-price {
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    .court-price span {
+      font-size: 1rem;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* Botón flotante/menú contextual CRUD */
+    .admin-menu-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: var(--elevation-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .context-menu {
+      position: absolute;
+      top: 48px;
+      right: 10px;
+      background-color: var(--surface-card);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--elevation-2);
+      border: 1px solid var(--border-color);
+      display: none;
+      flex-direction: column;
+      z-index: 5;
+      min-width: 140px;
+      overflow: hidden;
+    }
+
+    .context-menu.active {
+      display: flex;
+    }
+
+    .context-option {
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      background: none;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      color: var(--text-main);
+      transition: background-color 0.2s ease;
+    }
+
+    .context-option:hover {
+      background-color: var(--primary-light);
+    }
+
+    .context-option.delete {
+      color: var(--danger);
+      border-top: 1px solid var(--border-color);
+    }
+
+    .btn-action {
+      margin-top: 8px;
+      padding: 10px;
+      background-color: var(--primary-dark);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Encabezado Administrador / Encargado -->
+    <header class="app-header">
+      <div class="header-titles">
+        <h1>Panel de Gestión <span class="admin-badge">Admin</span></h1>
+        <p>Administrador / Encargado</p>
+      </div>
+      <!-- Opción de Inicio de Sesión / Cerrar Sesión -->
+      <!-- <button class="btn-login" onclick="alert('Redirigiendo a Inicio de Sesión')">Inicio de sesión</button> -->
+      <a href="InicioSesion.html" class="btn-login" style="text-decoration:none;">Inicio de sesión</a>
+    </header>
+
+    <!-- Barra de acciones rápidas para Administrador -->
+    <nav class="admin-toolbar">
+      <!-- <button class="btn-tool primary" onclick="alert('Navegando a Formulario Crear Cancha')"> ➕ Crear Cancha </button> -->
+       <a href="CrearCancha.html" class="btn-tool primary" style="text-decoration:none;">➕ Crear Cancha</a>
+      <!-- <button class="btn-tool" onclick="alert('Navegando a Creación de Usuario')"> 👤 Crear Usuario </button> -->
+       <a href="CrearUsuario.html" class="btn-tool" style="text-decoration:none;">👤 Crear Usuario</a>
+      <!-- <button class="btn-tool" onclick="alert('Navegando a Gestión de Reservas')"> 📋 Consultar Reservas </button> -->
+       <a href="ReservasAdmin.html" class="btn-tool" style="text-decoration:none;">📋 Consultar Reservas</a>
+    </nav>
+
+    <main class="content-area">
+      
+      <div class="section-title">
+        <span>Catálogo de Canchas</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">2 canchas registradas</span>
+      </div>
+
+      <!-- Catálogo de Canchas con opciones de Administrador -->
+      <div class="catalog-grid">
+        
+        <!-- Cancha 1 con Menú Contextual Admin -->
+        <article class="court-card">
+          <button class="admin-menu-btn" onclick="toggleMenu('menu1')">⋮</button>
+          
+          <!-- Menú Contextual CRUD -->
+          <div class="context-menu" id="menu1">
+            <button class="context-option" onclick="alert('Editar datos de Cancha 1')">✏️ Editar Cancha</button>
+            <button class="context-option delete" onclick="alert('Eliminar Cancha 1')">🗑️ Eliminar</button>
+          </div>
+
+          <img class="court-image" src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80" alt="Cancha Sintética 1">
+          
+          <div class="court-info">
+            <div class="court-title-wrap">
+              <h2 class="court-name">Cancha Sintética 1</h2>
+              <span class="status-badge available">Disponible</span>
+            </div>
+            <div class="court-price">
+              Precio: <span>$60.000</span> / hr
+            </div>
+            <!-- <button class="btn-action" onclick="alert('Ver Calendario y Reservas del día')">Consultar Disponibilidad / Día</button> -->
+             <a href="ReservasDia.html" class="btn-action" style="text-decoration:none; display:block;">Consultar Disponibilidad / Día</a>
+          </div>
+        </article>
+
+        <!-- Cancha 2 con Menú Contextual Admin -->
+        <article class="court-card">
+          <button class="admin-menu-btn" onclick="toggleMenu('menu2')">⋮</button>
+          
+          <!-- Menú Contextual CRUD -->
+          <div class="context-menu" id="menu2">
+            <button class="context-option" onclick="alert('Editar datos de Cancha 2')">✏️ Editar Cancha</button>
+            <button class="context-option delete" onclick="alert('Eliminar Cancha 2')">🗑️ Eliminar</button>
+          </div>
+
+          <img class="court-image" src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?auto=format&fit=crop&w=600&q=80" alt="Cancha Sintética 2">
+          
+          <div class="court-info">
+            <div class="court-title-wrap">
+              <h2 class="court-name">Cancha Sintética 2</h2>
+              <span class="status-badge available">Disponible</span>
+            </div>
+            <div class="court-price">
+              Precio: <span>$70.000</span> / hr
+            </div>
+            <!-- <button class="btn-action" onclick="alert('Ver Calendario y Reservas del día')">Consultar Disponibilidad / Día</button> -->
+             <a href="ReservasDia.html" class="btn-action" style="text-decoration:none; display:block;">Consultar Disponibilidad / Día</a>
+          </div>
+        </article>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleMenu(menuId) {
+      // Cerrar otros menús abiertos
+      document.querySelectorAll('.context-menu').forEach(menu => {
+        if (menu.id !== menuId) {
+          menu.classList.remove('active');
+        }
+      });
+      
+      const targetMenu = document.getElementById(menuId);
+      targetMenu.classList.toggle('active');
+    }
+
+    // Cerrar menús al hacer clic fuera
+    document.addEventListener('click', function(event) {
+      if (!event.target.classList.contains('admin-menu-btn')) {
+        document.querySelectorAll('.context-menu').forEach(menu => {
+          menu.classList.remove('active');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

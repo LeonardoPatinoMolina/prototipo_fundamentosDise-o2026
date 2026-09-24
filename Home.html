@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reserva de Canchas Syntheticas - Cliente</title>
+  <!-- Fuente Roboto para estética Material Design -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      /* Paleta de colores cálidos pastel y Material UI */
+      --bg-primary: #fdf8f5;
+      --surface-card: #ffffff;
+      --primary: #e07a5f;
+      --primary-light: #f4f1de;
+      --primary-dark: #3d405b;
+      --secondary: #81b29a;
+      --accent: #f2cc8f;
+      
+      --status-pending: #f2cc8f;
+      --status-reserved: #81b29a;
+      --status-in-progress: #3d405b;
+      --status-canceled: #e07a5f;
+
+      --text-main: #2b2d42;
+      --text-muted: #6c757d;
+      --border-color: #f0e6df;
+      
+      --elevation-1: 0 2px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.1);
+      --elevation-2: 0 4px 8px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.06);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 0;
+    }
+    a.btn-action, a.btn-tool, a.btn-back {
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+    /* Enfoque mobile-first alineado a dimensiones tipo iPhone 17 Pro Max (max-width: 430px) y responsive */
+    .app-container {
+      width: 100%;
+      max-width: 430px;
+      background-color: var(--bg-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding: 20px 0;
+      }
+      .app-container {
+        max-width: 768px;
+        min-height: calc(100vh - 40px);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+      }
+    }
+
+    /* Encabezado sin banners de marca */
+    .app-header {
+      padding: 20px 20px 12px 20px;
+      background-color: var(--surface-card);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .app-header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 4px;
+    }
+
+    .app-header p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Navegación por pestañas */
+    .tab-nav {
+      display: flex;
+      background-color: var(--surface-card);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tab-button {
+      flex: 1;
+      padding: 14px 0;
+      border: none;
+      background: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s ease;
+    }
+
+    .tab-button.active {
+      color: var(--primary);
+    }
+
+    .tab-button.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 15%;
+      width: 70%;
+      height: 3px;
+      background-color: var(--primary);
+      border-radius: 3px 3px 0 0;
+    }
+
+    /* Contenido principal */
+    .content-area {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Tarjetas del Catálogo de Canchas */
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 768px) {
+      .catalog-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .court-card {
+      background-color: var(--surface-card);
+      border-radius: var(--radius-md);
+      box-shadow: var(--elevation-1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border-color);
+    }
+
+    .court-image {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      background-color: var(--primary-light);
+    }
+
+    .court-info {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .court-title-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .court-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .status-badge {
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: capitalize;
+    }
+
+    .status-badge.available {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .status-badge.unavailable {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+
+    .court-price {
+      font-size: 0.95rem;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .court-price span {
+      font-size: 1.1rem;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .btn-action {
+      margin-top: 8px;
+      padding: 12px;
+      background-color: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: var(--elevation-1);
+      transition: background-color 0.2s ease;
+      text-align: center;
+      width: 100%;
+    }
+
+    .btn-action:disabled {
+      background-color: var(--border-color);
+      color: var(--text-muted);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Sección Mis Reservas */
+    .lookup-card {
+      background-color: var(--surface-card);
+      padding: 16px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--elevation-1);
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--primary-dark);
+    }
+
+    .form-control {
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      outline: none;
+      background-color: var(--bg-primary);
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      background-color: #fff;
+    }
+
+    .reservation-card {
+      background-color: var(--surface-card);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--elevation-1);
+      margin-bottom: 12px;
+      border-left: 4px solid var(--primary-dark);
+      border-top: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .reservation-card.pending {
+      border-left-color: var(--status-pending);
+    }
+
+    .reservation-card.reserved {
+      border-left-color: var(--status-reserved);
+    }
+
+    .reservation-card.in-progress {
+      border-left-color: var(--status-in-progress);
+    }
+
+    .reservation-card.canceled {
+      border-left-color: var(--status-canceled);
+    }
+
+    .res-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .res-court {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .res-status-tag {
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background-color: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    .res-details {
+      font-size: 0.85rem;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .btn-cancel {
+      background-color: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn-cancel:hover {
+      background-color: var(--primary-light);
+    }
+
+    .btn-cancel:disabled {
+      border-color: var(--border-color);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Encabezado general de la vista cliente -->
+    <header class="app-header">
+      <h1>Reserva de Canchas</h1>
+      <p>Consulta disponibilidad y gestiona tus reservas</p>
+    </header>
+
+    <!-- Navegación por pestañas del Home del Cliente -->
+    <nav class="tab-nav">
+      <button class="tab-button active" onclick="switchTab('catalogo')">Catálogo de Canchas</button>
+      <button class="tab-button" onclick="switchTab('mis-reservas')">Mis Reservas</button>
+    </nav>
+
+    <!-- Contenido de las pestañas -->
+    <main class="content-area">
+
+      <!-- Pestaña 1: Catálogo de Canchas -->
+      <section id="tab-catalogo" class="tab-content active">
+        <div class="catalog-grid">
+          
+          <!-- Cancha 1 -->
+          <article class="court-card">
+            <!-- Imagen de referencia para el catálogo -->
+            <img class="court-image" src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80" alt="Cancha Sintética 1">
+            <div class="court-info">
+              <div class="court-title-wrap">
+                <h2 class="court-name">Cancha Sintética 1</h2>
+                <span class="status-badge available">Disponible</span>
+              </div>
+              <div class="court-price">
+                Precio: <span>$60.000</span> / hora
+              </div>
+              <!-- <button class="btn-action" onclick="alert('Redirigiendo a Calendario de Cancha 1')">Ver Disponibilidad</button> -->
+              <a href="CalendarioCancha.html" class="btn-action">Ver Disponibilidad</a>
+            </div>
+          </article>
+
+          <!-- Cancha 2 -->
+          <article class="court-card">
+            <!-- Imagen de referencia para el catálogo -->
+            <img class="court-image" src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?auto=format&fit=crop&w=600&q=80" alt="Cancha Sintética 2">
+            <div class="court-info">
+              <div class="court-title-wrap">
+                <h2 class="court-name">Cancha Sintética 2</h2>
+                <span class="status-badge available">Disponible</span>
+              </div>
+              <div class="court-price">
+                Precio: <span>$70.000</span> / hora
+              </div>
+              <!-- <button class="btn-action" onclick="alert('Redirigiendo a Calendario de Cancha 2')">Ver Disponibilidad</button> -->
+              <a href="CalendarioCancha.html" class="btn-action">Ver Disponibilidad</a>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- Pestaña 2: Mis Reservas -->
+      <section id="tab-mis-reservas" class="tab-content">
+        
+        <!-- Formulario de consulta por documento para primera visita -->
+        <div class="lookup-card">
+          <div class="form-group">
+            <label for="document-input">Número de Documento</label>
+            <input type="text" id="document-input" class="form-control" placeholder="Ingrese su documento de identidad">
+          </div>
+          <button class="btn-action" onclick="consultarReservas()">Consultar mis reservas</button>
+        </div>
+
+        <!-- Listado de reservas asociadas -->
+        <div id="reservas-list">
+          
+          <!-- Ejemplo de reserva con estado "Pendiente por aprobación" (Fecha futura) -->
+          <article class="reservation-card pending">
+            <div class="res-header">
+              <span class="res-court">Cancha Sintética 1</span>
+              <span class="res-status-tag">Pendiente por aprobación</span>
+            </div>
+            <div class="res-details">
+              <div><strong>Fecha:</strong> 28/09/2026</div>
+              <div><strong>Horas:</strong> 18:00 - 19:00, 19:00 - 20:00 (2 hrs)</div>
+              <div><strong>Cliente:</strong> Carlos Mendoza (Doc: 1012345678)</div>
+            </div>
+            <!-- Regla de negocio: Cancelación válida para pendientes y con fecha/hora futura -->
+            <button class="btn-cancel" onclick="alert('Solicitud de cancelación enviada para aprobación')">Solicitar cancelación</button>
+          </article>
+
+          <!-- Ejemplo de reserva con estado "Reservada" -->
+          <article class="reservation-card reserved">
+            <div class="res-header">
+              <span class="res-court">Cancha Sintética 2</span>
+              <span class="res-status-tag">Reservada</span>
+            </div>
+            <div class="res-details">
+              <div><strong>Fecha:</strong> 25/09/2026</div>
+              <div><strong>Horas:</strong> 20:00 - 21:00 (1 hr)</div>
+              <div><strong>Cliente:</strong> Carlos Mendoza (Doc: 1012345678)</div>
+            </div>
+            <button class="btn-cancel" disabled title="Solo se puede cancelar reservas en estado Pendiente">Solicitar cancelación</button>
+          </article>
+
+          <!-- Ejemplo de reserva con estado "Cancelada" -->
+          <article class="reservation-card canceled">
+            <div class="res-header">
+              <span class="res-court">Cancha Sintética 1</span>
+              <span class="res-status-tag">Cancelada</span>
+            </div>
+            <div class="res-details">
+              <div><strong>Fecha:</strong> 15/09/2026</div>
+              <div><strong>Horas:</strong> 16:00 - 17:00 (1 hr)</div>
+              <div><strong>Cliente:</strong> Carlos Mendoza (Doc: 1012345678)</div>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Cambio interactivo entre pestañas para el prototipo
+    function switchTab(tabName) {
+      const tabs = document.querySelectorAll('.tab-content');
+      const buttons = document.querySelectorAll('.tab-button');
+      
+      tabs.forEach(tab => tab.classList.remove('active'));
+      buttons.forEach(btn => btn.classList.remove('active'));
+
+      if (tabName === 'catalogo') {
+        document.getElementById('tab-catalogo').classList.add('active');
+        buttons[0].classList.add('active');
+      } else if (tabName === 'mis-reservas') {
+        document.getElementById('tab-mis-reservas').classList.add('active');
+        buttons[1].classList.add('active');
+      }
+    }
+
+    function consultarReservas() {
+      const doc = document.getElementById('document-input').value;
+      if (!doc) {
+        alert('Por favor ingrese su número de documento.');
+        return;
+      }
+      alert('Consultando reservas asociadas al documento: ' + doc);
+    }
+  </script>
+</body>
+</html>

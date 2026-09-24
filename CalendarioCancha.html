@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendario de Cancha - Reserva de Canchas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #fdf8f5;
+      --surface-card: #ffffff;
+      --primary: #e07a5f;
+      --primary-light: #f4f1de;
+      --primary-dark: #3d405b;
+      --secondary: #81b29a;
+      --accent: #f2cc8f;
+      
+      --text-main: #2b2d42;
+      --text-muted: #6c757d;
+      --border-color: #f0e6df;
+      
+      --elevation-1: 0 2px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.1);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+    }
+    a.btn-action, a.btn-tool, a.btn-back {
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 430px;
+      background-color: var(--bg-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding: 20px 0;
+      }
+      .app-container {
+        max-width: 768px;
+        min-height: calc(100vh - 40px);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+      }
+    }
+
+    /* Encabezado */
+    .app-header {
+      padding: 16px 20px;
+      background-color: var(--surface-card);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .btn-back {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+
+    .header-titles h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .header-titles p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Datepicker / Tarjeta de Calendario */
+    .calendar-card {
+      background-color: var(--surface-card);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--elevation-1);
+      border: 1px solid var(--border-color);
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .calendar-header h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .nav-month-btn {
+      background: none;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      cursor: pointer;
+      color: var(--primary-dark);
+      font-weight: 500;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      text-align: center;
+    }
+
+    .day-name {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      padding-bottom: 8px;
+    }
+
+    .day-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .day-cell.available:hover {
+      background-color: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .day-cell.selected {
+      background-color: var(--primary) !important;
+      color: #ffffff !important;
+      font-weight: 700;
+    }
+
+    .day-cell.disabled {
+      background-color: transparent;
+      color: #e0e0e0;
+      cursor: not-allowed;
+    }
+
+    .day-cell.out-of-service {
+      background-color: #f5f5f5;
+      color: #bdbdbd;
+      text-decoration: line-through;
+      cursor: not-allowed;
+    }
+
+    .day-cell.empty {
+      cursor: default;
+    }
+
+    .calendar-legend {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot.available { background-color: var(--bg-primary); border: 1px solid var(--border-color); }
+    .dot.selected { background-color: var(--primary); }
+    .dot.out-of-service { background-color: #bdbdbd; }
+
+    /* Controles de Administrador: Día fuera de servicio */
+    .admin-controls {
+      background-color: var(--primary-light);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px dashed var(--primary);
+      margin-top: 16px;
+    }
+
+    .admin-controls span {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--primary-dark);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Botón de navegación a la vista Horas del Día */
+    .selection-summary {
+      background-color: var(--surface-card);
+      padding: 16px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--elevation-1);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .summary-text {
+      font-size: 0.9rem;
+      color: var(--primary-dark);
+    }
+
+    .summary-text strong {
+      color: var(--primary);
+    }
+
+    .btn-action {
+      padding: 12px;
+      background-color: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .btn-action:disabled {
+      background-color: var(--border-color);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <header class="app-header">
+      <!-- <button class="btn-back" onclick="alert('Volver al Catálogo')">←</button> -->
+      <a href="Home.html" class="btn-back">←</a>
+      <div class="header-titles">
+        <h1>Cancha Sintética 1</h1>
+        <p>Selección de fecha (Alcance: 1 mes)</p>
+      </div>
+    </header>
+
+    <main class="content-area">
+      
+      <!-- Datepicker interactivo con rango del 23/09/2026 al 23/10/2026 -->
+      <section class="calendar-card">
+        <div class="calendar-header">
+          <button class="nav-month-btn" id="prevBtn" onclick="changeMonth(-1)">&lt; Sep</button>
+          <h2 id="monthTitle">Septiembre 2026</h2>
+          <button class="nav-month-btn" id="nextBtn" onclick="changeMonth(1)">Oct &gt;</button>
+        </div>
+
+        <div class="calendar-grid">
+          <div class="day-name">Dom</div>
+          <div class="day-name">Lun</div>
+          <div class="day-name">Mar</div>
+          <div class="day-name">Mié</div>
+          <div class="day-name">Jue</div>
+          <div class="day-name">Vie</div>
+          <div class="day-name">Sáb</div>
+
+          <!-- Muestra dinámicamente según el mes seleccionado -->
+          <div id="calendarDays" style="display: contents;">
+            <!-- Días deshabilitados (Pasados) -->
+            <div class="day-cell empty"></div>
+            <div class="day-cell empty"></div>
+            <div class="day-cell disabled">1</div>
+            <div class="day-cell disabled">2</div>
+            <div class="day-cell disabled">3</div>
+            <div class="day-cell disabled">4</div>
+            <div class="day-cell disabled">5</div>
+            
+            <div class="day-cell disabled">6</div>
+            <div class="day-cell disabled">7</div>
+            <div class="day-cell disabled">8</div>
+            <div class="day-cell disabled">9</div>
+            <div class="day-cell disabled">10</div>
+            <div class="day-cell disabled">11</div>
+            <div class="day-cell disabled">12</div>
+            
+            <div class="day-cell disabled">13</div>
+            <div class="day-cell disabled">14</div>
+            <div class="day-cell disabled">15</div>
+            <div class="day-cell disabled">16</div>
+            <div class="day-cell disabled">17</div>
+            <div class="day-cell disabled">18</div>
+            <div class="day-cell disabled">19</div>
+            
+            <div class="day-cell disabled">20</div>
+            <div class="day-cell disabled">21</div>
+            <div class="day-cell disabled">22</div>
+            
+            <!-- Hoy (23 Sep 2026) y días habilitados del mes -->
+            <div class="day-cell available selected" onclick="selectDate(this, '23/09/2026')">23</div>
+            <div class="day-cell available" onclick="selectDate(this, '24/09/2026')">24</div>
+            <div class="day-cell available" onclick="selectDate(this, '25/09/2026')">25</div>
+            <div class="day-cell available" onclick="selectDate(this, '26/09/2026')">26</div>
+            
+            <div class="day-cell available" onclick="selectDate(this, '27/09/2026')">27</div>
+            <div class="day-cell available" onclick="selectDate(this, '28/09/2026')">28</div>
+            <div class="day-cell out-of-service" title="Día fuera de servicio">29</div>
+            <div class="day-cell available" onclick="selectDate(this, '30/09/2026')">30</div>
+          </div>
+        </div>
+
+        <div class="calendar-legend">
+          <div class="legend-item"><span class="dot available"></span> Disponible</div>
+          <div class="legend-item"><span class="dot selected"></span> Seleccionado</div>
+          <div class="legend-item"><span class="dot out-of-service"></span> Fuera de servicio</div>
+        </div>
+
+        <!-- Menú contextual Administrador: Marcar día fuera de servicio -->
+        <div class="admin-controls">
+          <span>Día fuera de servicio (Admin)</span>
+          <label class="switch">
+            <input type="checkbox" id="outOfServiceSwitch" onchange="toggleOutOfService(this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Confirmación de fecha elegida y paso a "Horas del día" -->
+      <section class="selection-summary">
+        <div class="summary-text">
+          Fecha seleccionada: <strong id="selectedDateDisplay">23/09/2026</strong>
+        </div>
+        <!-- <button class="btn-action" id="btnNext" onclick="alert('Navegando a la vista Horas del Día')"> Ver horas disponibles </button> -->
+         <a href="HorasDia.html" class="btn-action" style="text-decoration:none; text-align:center; display:block;">Ver horas disponibles</a>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    let selectedDate = '23/09/2026';
+
+    function selectDate(element, dateStr) {
+      document.querySelectorAll('.day-cell').forEach(cell => {
+        if(!cell.classList.contains('out-of-service') && !cell.classList.contains('disabled') && !cell.classList.contains('empty')) {
+          cell.classList.remove('selected');
+        }
+      });
+      element.classList.add('selected');
+      selectedDate = dateStr;
+      document.getElementById('selectedDateDisplay').innerText = dateStr;
+      document.getElementById('btnNext').disabled = false;
+    }
+
+    function toggleOutOfService(isChecked) {
+      if (isChecked) {
+        alert('El día ' + selectedDate + ' ha sido marcado como Fuera de Servicio.');
+      } else {
+        alert('El día ' + selectedDate + ' ha sido rehabilitado.');
+      }
+    }
+
+    function changeMonth(direction) {
+      // Simulación de cambio de mes respetando el rango de 1 mes (Sep 2026 -> Oct 2026)
+      if (direction === 1) {
+        document.getElementById('monthTitle').innerText = 'Octubre 2026';
+        document.getElementById('prevBtn').style.display = 'block';
+        document.getElementById('nextBtn').style.display = 'none';
+      } else {
+        document.getElementById('monthTitle').innerText = 'Septiembre 2026';
+        document.getElementById('prevBtn').style.display = 'none';
+        document.getElementById('nextBtn').style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>

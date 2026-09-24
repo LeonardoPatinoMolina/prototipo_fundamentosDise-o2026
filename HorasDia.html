@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Horas del Día - Reserva de Canchas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #fdf8f5;
+      --surface-card: #ffffff;
+      --primary: #e07a5f;
+      --primary-light: #f4f1de;
+      --primary-dark: #3d405b;
+      --secondary: #81b29a;
+      --accent: #f2cc8f;
+      
+      --text-main: #2b2d42;
+      --text-muted: #6c757d;
+      --border-color: #f0e6df;
+      
+      --elevation-1: 0 2px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.1);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 0;
+    }
+    a.btn-action, a.btn-tool, a.btn-back {
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+    .app-container {
+      width: 100%;
+      max-width: 430px;
+      background-color: var(--bg-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding: 20px 0;
+      }
+      .app-container {
+        max-width: 768px;
+        min-height: calc(100vh - 40px);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+      }
+    }
+
+    /* Encabezado */
+    .app-header {
+      padding: 16px 20px;
+      background-color: var(--surface-card);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .btn-back {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+
+    .header-titles h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .header-titles p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Info rápida del contexto seleccionado */
+    .context-card {
+      background-color: var(--primary-light);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--border-color);
+    }
+
+    .context-info {
+      font-size: 0.85rem;
+      color: var(--primary-dark);
+    }
+
+    .context-info strong {
+      font-weight: 700;
+    }
+
+    /* Leyenda de estados de las horas */
+    .hours-legend {
+      display: flex;
+      justify-content: space-around;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background-color: var(--surface-card);
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip-sample {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+    .chip-sample.available { background-color: var(--surface-card); }
+    .chip-sample.selected { background-color: var(--secondary); border-color: var(--secondary); }
+    .chip-sample.occupied { background-color: #f5f5f5; border-color: #e0e0e0; }
+
+    /* Grilla de franjas horarias (6am a 10pm) */
+    .hours-card {
+      background-color: var(--surface-card);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--elevation-1);
+      border: 1px solid var(--border-color);
+    }
+
+    .hours-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    @media (min-width: 400px) {
+      .hours-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .hour-chip {
+      padding: 12px 8px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background-color: var(--surface-card);
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .hour-chip:hover:not(.occupied) {
+      border-color: var(--secondary);
+    }
+
+    .hour-chip.selected {
+      background-color: var(--secondary);
+      color: #ffffff;
+      border-color: var(--secondary);
+      font-weight: 700;
+    }
+
+    .hour-chip.occupied {
+      background-color: #f5f5f5;
+      color: #bdbdbd;
+      text-decoration: line-through;
+      border-color: #e0e0e0;
+      cursor: not-allowed;
+    }
+
+    /* Panel de Resumen de Liquidación */
+    .summary-card {
+      background-color: var(--surface-card);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--elevation-1);
+      border: 1px solid var(--border-color);
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    .summary-row.total {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      border-top: 1px dashed var(--border-color);
+      padding-top: 8px;
+    }
+
+    .summary-row.total span:last-child {
+      color: var(--primary);
+    }
+
+    .btn-action {
+      padding: 14px;
+      background-color: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: var(--elevation-1);
+      transition: background-color 0.2s ease;
+    }
+
+    .btn-action:disabled {
+      background-color: var(--border-color);
+      color: var(--text-muted);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <header class="app-header">
+      <!-- <button class="btn-back" onclick="alert('Volver al Calendario')">←</button> -->
+      <a href="CalendarioCancha.html" class="btn-back">←</a>
+      <div class="header-titles">
+        <h1>Horas Disponibles</h1>
+        <p>Cancha Sintética 1</p>
+      </div>
+    </header>
+
+    <main class="content-area">
+      
+      <!-- Indicador de contexto -->
+      <div class="context-card">
+        <div class="context-info">Fecha: <strong>23/09/2026</strong></div>
+        <div class="context-info">Precio/Hora: <strong>$60.000</strong></div>
+      </div>
+
+      <!-- Convención de colores -->
+      <div class="hours-legend">
+        <div class="legend-item"><span class="chip-sample available"></span> Disponible</div>
+        <div class="legend-item"><span class="chip-sample selected"></span> Seleccionada</div>
+        <div class="legend-item"><span class="chip-sample occupied"></span> Reservada</div>
+      </div>
+
+      <!-- Listado de franjas de 6am a 10pm (Horas enteras) -->
+      <section class="hours-card">
+        <div class="hours-grid">
+          <div class="hour-chip" data-hour="06:00 - 07:00" onclick="toggleHour(this)">06:00 - 07:00</div>
+          <div class="hour-chip" data-hour="07:00 - 08:00" onclick="toggleHour(this)">07:00 - 08:00</div>
+          <div class="hour-chip occupied" title="Hora reservada por otro cliente">08:00 - 09:00</div>
+          <div class="hour-chip" data-hour="09:00 - 10:00" onclick="toggleHour(this)">09:00 - 10:00</div>
+          <div class="hour-chip" data-hour="10:00 - 11:00" onclick="toggleHour(this)">10:00 - 11:00</div>
+          <div class="hour-chip occupied" title="Hora reservada por otro cliente">11:00 - 12:00</div>
+          <div class="hour-chip" data-hour="12:00 - 13:00" onclick="toggleHour(this)">12:00 - 13:00</div>
+          <div class="hour-chip" data-hour="13:00 - 14:00" onclick="toggleHour(this)">13:00 - 14:00</div>
+          <div class="hour-chip" data-hour="14:00 - 15:00" onclick="toggleHour(this)">14:00 - 15:00</div>
+          <div class="hour-chip" data-hour="15:00 - 16:00" onclick="toggleHour(this)">15:00 - 16:00</div>
+          <div class="hour-chip" data-hour="16:00 - 17:00" onclick="toggleHour(this)">16:00 - 17:00</div>
+          <div class="hour-chip" data-hour="17:00 - 18:00" onclick="toggleHour(this)">17:00 - 18:00</div>
+          <div class="hour-chip selected" data-hour="18:00 - 19:00" onclick="toggleHour(this)">18:00 - 19:00</div>
+          <div class="hour-chip selected" data-hour="19:00 - 20:00" onclick="toggleHour(this)">19:00 - 20:00</div>
+          <div class="hour-chip" data-hour="20:00 - 21:00" onclick="toggleHour(this)">20:00 - 21:00</div>
+          <div class="hour-chip" data-hour="21:00 - 22:00" onclick="toggleHour(this)">21:00 - 22:00</div>
+        </div>
+      </section>
+
+      <!-- Resumen y cálculo dinámico -->
+      <section class="summary-card">
+        <div class="summary-row">
+          <span>Horas seleccionadas:</span>
+          <span id="selectedCountText">2 hora(s)</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total Estimado:</span>
+          <span id="totalPriceText">$120.000</span>
+        </div>
+        <!-- <button class="btn-action" id="btnContinue" onclick="alert('Avanzando al Formulario de Reserva')"> Continuar a Reservar  </button> -->
+         <a href="FormularioReserva.html" class="btn-action" style="text-decoration:none; text-align:center; display:block;">Reservar</a>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    const HOURLY_RATE = 60000;
+
+    function toggleHour(element) {
+      if (element.classList.contains('occupied')) return;
+      
+      element.classList.toggle('selected');
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const selectedChips = document.querySelectorAll('.hour-chip.selected');
+      const count = selectedChips.length;
+      const total = count * HOURLY_RATE;
+
+      document.getElementById('selectedCountText').innerText = count + ' hora(s)';
+      document.getElementById('totalPriceText').innerText = '$' + total.toLocaleString('es-CO');
+
+      const btnContinue = document.getElementById('btnContinue');
+      if (count === 0) {
+        btnContinue.disabled = true;
+      } else {
+        btnContinue.disabled = false;
+      }
+    }
+
+    // Inicializar resumen en la carga
+    updateSummary();
+  </script>
+</body>
+</html>

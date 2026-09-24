@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendario de Cancha - Reserva de Canchas</title>
+  
+  <!-- Fuente Google Roboto -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Estilo Flatpickr Base y Localización Español -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://npmcdn.flatpickr/dist/l10n/es.js"></script>
+  
+
+  <!-- Estilo Unificado del Proyecto -->
+  <!-- <link rel="stylesheet" href="style.css"> -->
+  <style>
+    :root {
+      --bg-primary: #fdf8f5;
+      --surface-card: #ffffff;
+      --primary: #e07a5f;
+      --primary-light: #f4f1de;
+      --primary-dark: #3d405b;
+      --secondary: #81b29a;
+      --accent: #f2cc8f;
+      
+      --text-main: #2b2d42;
+      --text-muted: #6c757d;
+      --border-color: #f0e6df;
+      
+      --elevation-1: 0 2px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.1);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+    }
+    a.btn-action, a.btn-tool, a.btn-back {
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 430px;
+      background-color: var(--bg-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding: 20px 0;
+      }
+      .app-container {
+        max-width: 768px;
+        min-height: calc(100vh - 40px);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+      }
+    }
+
+    /* Encabezado */
+    .app-header {
+      padding: 16px 20px;
+      background-color: var(--surface-card);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .btn-back {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+
+    .header-titles h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .header-titles p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Datepicker / Tarjeta de Calendario */
+    .calendar-card {
+      background-color: var(--surface-card);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--elevation-1);
+      border: 1px solid var(--border-color);
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .calendar-header h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .nav-month-btn {
+      background: none;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      cursor: pointer;
+      color: var(--primary-dark);
+      font-weight: 500;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      text-align: center;
+    }
+
+    .day-name {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      padding-bottom: 8px;
+    }
+
+    .day-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .day-cell.available:hover {
+      background-color: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .day-cell.selected {
+      background-color: var(--primary) !important;
+      color: #ffffff !important;
+      font-weight: 700;
+    }
+
+    .day-cell.disabled {
+      background-color: transparent;
+      color: #e0e0e0;
+      cursor: not-allowed;
+    }
+
+    .day-cell.out-of-service {
+      background-color: #f5f5f5;
+      color: #bdbdbd;
+      text-decoration: line-through;
+      cursor: not-allowed;
+    }
+
+    .day-cell.empty {
+      cursor: default;
+    }
+
+    .calendar-legend {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot.available { background-color: var(--bg-primary); border: 1px solid var(--border-color); }
+    .dot.selected { background-color: var(--primary); }
+    .dot.out-of-service { background-color: #bdbdbd; }
+
+    /* Controles de Administrador: Día fuera de servicio */
+    .admin-controls {
+      background-color: var(--primary-light);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px dashed var(--primary);
+      margin-top: 16px;
+    }
+
+    .admin-controls span {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--primary-dark);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Botón de navegación a la vista Horas del Día */
+    .selection-summary {
+      background-color: var(--surface-card);
+      padding: 16px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--elevation-1);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .summary-text {
+      font-size: 0.9rem;
+      color: var(--primary-dark);
+    }
+
+    .summary-text strong {
+      color: var(--primary);
+    }
+
+    .btn-action {
+      padding: 12px;
+      background-color: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .btn-action:disabled {
+      background-color: var(--border-color);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+    /* Personalización visual de Flatpickr según Paleta Pastel del Proyecto */
+    #calendario-inline,
+    .flatpickr-calendar.inline,
+    .flatpickr-calendar,
+    .flatpickr-wrapper,
+    .flatpickr-rContainer,
+    .flatpickr-innerContainer {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0;
+    }
+    .flatpickr-rContainer{
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .flatpickr-calendar.inline {
+      background-color: var(--surface-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      box-shadow: var(--elevation-1);
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    .flatpickr-months {
+      background-color: var(--primary-light);
+      border-radius: var(--radius-sm);
+      padding: 6px 0;
+      margin-bottom: 8px;
+      display:flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .flatpickr-months .flatpickr-month {
+      color: var(--primary-dark);
+      font-weight: 700;
+    }
+
+    .flatpickr-current-month .flatpickr-monthDropdown-months {
+      font-weight: 700;
+    }
+
+    .flatpickr-months .flatpickr-prev-month, 
+    .flatpickr-months .flatpickr-next-month {
+      fill: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    span.flatpickr-weekdays {
+      color: var(--primary-dark);
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    /* .flatpickr-weekdays {
+    background-color: blue;
+    /* align-content: center; 
+  } */
+
+    .flatpickr-day {
+      border-radius: 50% !important;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .flatpickr-day.today {
+      border-color: var(--primary) !important;
+      color: var(--primary);
+    }
+
+    .flatpickr-day.selected, 
+    .flatpickr-day.selected:hover {
+      background: var(--primary) !important;
+      border-color: var(--primary) !important;
+      color: #ffffff !important;
+      font-weight: 700;
+    }
+
+    .flatpickr-day.flatpickr-disabled, 
+    .flatpickr-day.flatpickr-disabled:hover {
+      color: #e0e0e0 !important;
+    }
+
+    /* Modificador personalizado para días marcados "Fuera de servicio" */
+    .flatpickr-day.out-of-service-day {
+      background-color: #f5f5f5 !important;
+      color: #bdbdbd !important;
+      text-decoration: line-through;
+    }
+
+    .calendar-container-card {
+      background-color: var(--surface-card);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--elevation-1);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .admin-controls {
+      background-color: var(--primary-light);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px dashed var(--primary);
+    }
+
+    .admin-controls span {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--primary-dark);
+    }
+
+ 
+
+
+
+    /* Contenedor general de los días */
+/* .flatpickr-days{
+
+  background-color: red;
+
+} */
+.flatpickr-days,
+    .dayContainer {
+      /* width: 100% !important; */
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Contenedor interno de los días */
+    .dayContainer {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 6px;
+      justify-items: center;
+      align-items: stretch;
+      width: 100% !important;
+    }
+
+    /* Estilo de cada día */
+    .flatpickr-day {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100% !important;
+      max-width: 42px;
+      height: 42px;
+      min-height: 42px;
+      border-radius: 50%;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <header class="app-header">
+      <a href="Home.html" class="btn-back">←</a>
+      <div class="header-titles">
+        <h1>Cancha Sintética 1</h1>
+        <p>Selección de fecha (Alcance: 1 mes)</p>
+      </div>
+    </header>
+
+    <main class="content-area">
+      
+      <section class="calendar-container-card">
+        <!-- Contenedor donde Flatpickr renderiza el datepicker inline -->
+        <div id="calendario-inline"></div>
+
+        <!-- Menú contextual para Administrador/Encargado: Marcar día fuera de servicio -->
+        <div class="admin-controls">
+          <span>Día fuera de servicio (Admin)</span>
+          <label class="switch">
+            <input type="checkbox" id="outOfServiceSwitch" onchange="toggleOutOfService(this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Confirmación de selección y paso a la vista de Horas del Día -->
+      <section class="form-card">
+        <div style="font-size: 0.9rem; color: var(--primary-dark);">
+          Fecha seleccionada: <strong id="selectedDateDisplay">Ninguna</strong>
+        </div>
+        <button class="btn-action" id="btnNext" disabled onclick="irASiguienteVista()">
+          Ver horas disponibles
+        </button>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    let fechaSeleccionadaStr = "";
+
+    // Configuración de Flatpickr con los settings requeridos
+    const hoy = new Date();
+    const unMesDespues = new Date();
+    unMesDespues.setMonth(hoy.getMonth() + 1);
+
+    const fp = flatpickr("#calendario-inline", {
+      inline: true,
+      locale: {
+        firstDayOfWeek: 1,
+        weekdays: {
+          shorthand: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+          longhand: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],         
+        }, 
+        months: {
+          shorthand: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Оct', 'Nov', 'Dic'],
+          longhand: ['Enero', 'Febreo', 'Мarzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        },
+      }, 
+      dateFormat: "Y-m-d",
+      minDate: "today",
+      maxDate: unMesDespues,
+      
+      onChange: function(selectedDates, dateStr, instance) {
+        fechaSeleccionadaStr = dateStr;
+        document.getElementById('selectedDateDisplay').innerText = dateStr;
+        document.getElementById('btnNext').disabled = false;
+      }
+    });
+
+    function irASiguienteVista() {
+      if (fechaSeleccionadaStr) {
+        window.location.href = "HorasDia.html?fecha=" + fechaSeleccionadaStr;
+      }
+    }
+
+    function toggleOutOfService(isChecked) {
+      if (!fechaSeleccionadaStr) {
+        alert("Por favor seleccione un día en el calendario primero.");
+        document.getElementById('outOfServiceSwitch').checked = !isChecked;
+        return;
+      }
+
+      if (isChecked) {
+        alert("El día " + fechaSeleccionadaStr + " ha sido marcado como Fuera de Servicio.");
+      } else {
+        alert("El día " + fechaSeleccionadaStr + " ha sido habilitado nuevamente.");
+      }
+    }
+  </script>
+</body>
+</html>

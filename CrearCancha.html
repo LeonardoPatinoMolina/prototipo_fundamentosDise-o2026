@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear Nueva Cancha - Gestión de Canchas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #fdf8f5;
+      --surface-card: #ffffff;
+      --primary: #e07a5f;
+      --primary-light: #f4f1de;
+      --primary-dark: #3d405b;
+      --secondary: #81b29a;
+      
+      --text-main: #2b2d42;
+      --text-muted: #6c757d;
+      --border-color: #f0e6df;
+      
+      --elevation-1: 0 2px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.1);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 0;
+    }
+    a.btn-action, a.btn-tool, a.btn-back {
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+    .app-container {
+      width: 100%;
+      max-width: 430px;
+      background-color: var(--bg-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding: 20px 0;
+      }
+      .app-container {
+        max-width: 768px;
+        min-height: calc(100vh - 40px);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+      }
+    }
+
+    /* Encabezado */
+    .app-header {
+      padding: 16px 20px;
+      background-color: var(--surface-card);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .btn-back {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+
+    .header-titles h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .header-titles p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Formulario Creación de Cancha */
+    .form-card {
+      background-color: var(--surface-card);
+      border-radius: var(--radius-md);
+      padding: 20px 16px;
+      box-shadow: var(--elevation-1);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .form-card h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 4px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--primary-dark);
+    }
+
+    .form-control {
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      outline: none;
+      background-color: var(--bg-primary);
+      transition: border-color 0.2s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      background-color: #ffffff;
+    }
+
+    /* Fila con Switch para Disponibilidad */
+    .switch-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+    }
+
+    .switch-row span {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--primary-dark);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--secondary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Previsualización de Imagen */
+    .image-preview {
+      width: 100%;
+      height: 140px;
+      border-radius: var(--radius-sm);
+      border: 1px dashed var(--border-color);
+      background-color: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .image-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .image-preview p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Botón de Acción */
+    .btn-action {
+      padding: 14px;
+      background-color: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: var(--elevation-1);
+      transition: background-color 0.2s ease;
+      margin-top: 10px;
+    }
+
+    .btn-action:hover {
+      background-color: #d0694e;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <header class="app-header">
+      <!-- <button class="btn-back" onclick="alert('Volver a Home Administrador')">←</button> -->
+       <a href="HomeAdmin.html" class="btn-back">←</a>
+      <div class="header-titles">
+        <h1>Crear Nueva Cancha</h1>
+        <p>Registro e información general</p>
+      </div>
+    </header>
+
+    <main class="content-area">
+      
+      <section class="form-card">
+        <h2>Detalles de la Cancha</h2>
+
+        <form id="createCourtForm" onsubmit="handleCreateCourt(event)">
+          <!-- Nombre de la cancha -->
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="courtName">Nombre de la Cancha *</label>
+            <input type="text" id="courtName" class="form-control" placeholder="Ej. Cancha Sintética 3" required>
+          </div>
+
+          <!-- Precio por Hora -->
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="hourlyRate">Precio por Hora ($) *</label>
+            <input type="number" id="hourlyRate" class="form-control" placeholder="Ej. 65000" min="0" step="1000" required>
+          </div>
+
+          <!-- URL de la Imagen -->
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="imageUrl">URL de la Imagen *</label>
+            <input type="url" id="imageUrl" class="form-control" placeholder="https://ejemplo.com/imagen.jpg" oninput="updateImagePreview(this.value)" required>
+            
+            <div class="image-preview" id="imagePreviewContainer">
+              <p id="previewText">Vista previa de la imagen</p>
+              <img id="previewImg" src="" alt="Previsualización">
+            </div>
+          </div>
+
+          <!-- Estado de Disponibilidad inicial -->
+          <div class="form-group" style="margin-bottom: 12px;">
+            <div class="switch-row">
+              <span>Habilitar Disponibilidad Inicial</span>
+              <label class="switch">
+                <input type="checkbox" id="courtAvailable" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Días fuera de servicio iniciales (Opcional) -->
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="outOfServiceDays">Días fuera de servicio (Notas/Fechas opcionales)</label>
+            <input type="text" id="outOfServiceDays" class="form-control" placeholder="Ej. Ninguno / Mantenimiento los Lunes">
+          </div>
+
+          <button type="submit" class="btn-action">
+            Guardar Cancha
+          </button>
+        </form>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function updateImagePreview(url) {
+      const previewImg = document.getElementById('previewImg');
+      const previewText = document.getElementById('previewText');
+      
+      if (url.trim() !== '') {
+        previewImg.src = url;
+        previewImg.style.display = 'block';
+        previewText.style.display = 'none';
+      } else {
+        previewImg.style.display = 'none';
+        previewText.style.display = 'block';
+      }
+    }
+
+    // function handleCreateCourt(event) {
+    //   event.preventDefault();
+      
+    //   const name = document.getElementById('courtName').value;
+    //   const price = document.getElementById('hourlyRate').value;
+    //   const isAvailable = document.getElementById('courtAvailable').checked ? 'Disponible' : 'No disponible';
+      
+    //   alert(`¡Cancha creada con éxito!\n\nNombre: ${name}\nPrecio por hora: $${Number(price).toLocaleString('es-CO')}\nEstado: ${isAvailable}`);
+    // }
+
+    function handleCreateCourt(event) {
+      event.preventDefault();
+      alert('Cancha creada con éxito');
+      window.location.href = "HomeAdmin.html";
+    }
+  </script>
+</body>
+</html>

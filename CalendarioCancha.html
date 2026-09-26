@@ -512,11 +512,11 @@
         <!-- Contenedor donde Flatpickr renderiza el datepicker inline -->
         <div id="calendario-inline"></div>
 
-        <!-- Menú contextual para Administrador/Encargado: Marcar día fuera de servicio -->
-        <div class="admin-controls">
+        <!-- Solo debe verse para administradores -->
+        <div class="admin-controls" style="display: none;">
           <span>Día fuera de servicio (Admin)</span>
           <label class="switch">
-            <input type="checkbox" id="outOfServiceSwitch">
+            <input type="checkbox" id="outOfServiceSwitch" disabled>
             <span class="slider"></span>
           </label>
         </div>
@@ -537,6 +537,25 @@
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+  <script>
+    (function () {
+      const rawUser = localStorage.getItem('prototipo-current-user');
+      const user = rawUser ? JSON.parse(rawUser) : null;
+      const adminControls = document.querySelector('.admin-controls');
+      const switchElem = document.getElementById('outOfServiceSwitch');
+      const isAdmin = !!user && user.role === 'Administrador';
+
+      if (adminControls) {
+        adminControls.hidden = !isAdmin;
+        adminControls.style.display = isAdmin ? 'flex' : 'none';
+      }
+
+      if (switchElem) {
+        switchElem.disabled = !isAdmin;
+        switchElem.checked = false;
+      }
+    })();
+  </script>
   <script src="app.js"></script>
 </body>
 </html>

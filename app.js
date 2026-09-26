@@ -519,6 +519,23 @@
     const imageInput = document.getElementById('imageUrl');
     const previewImg = document.getElementById('previewImg');
     const previewText = document.getElementById('previewText');
+    const headerTitle = document.querySelector('.header-titles h1');
+    const headerSubtitle = document.querySelector('.header-titles p');
+    const submitButton = form?.querySelector('button[type="submit"]');
+
+    if (headerTitle) {
+      headerTitle.textContent = editId ? 'Editar Cancha' : 'Crear Nueva Cancha';
+    }
+
+    if (headerSubtitle) {
+      headerSubtitle.textContent = editId ? 'Actualización de información' : 'Registro e información general';
+    }
+
+    if (submitButton) {
+      submitButton.textContent = editId ? 'Actualizar Cancha' : 'Guardar Cancha';
+    }
+
+    document.title = editId ? 'Editar Cancha - Gestión de Canchas' : 'Crear Nueva Cancha - Gestión de Canchas';
 
     if (imageInput) {
       imageInput.addEventListener('input', function () {
@@ -631,25 +648,38 @@
 
     const dateDisplay = document.getElementById('selectedDateDisplay');
     const nextButton = document.getElementById('btnNext');
-    const selectedDateField = '';
     const isStaff = isCurrentUserStaff();
+    const isAdmin = isCurrentUserAdmin();
     const adminControls = document.querySelector('.admin-controls');
     const switchElem = document.getElementById('outOfServiceSwitch');
+    const today = new Date();
+    const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
     if (dateDisplay) {
-      dateDisplay.textContent = 'Ninguna';
+      dateDisplay.textContent = todayISO;
     }
     if (nextButton) {
-      nextButton.disabled = true;
+      nextButton.disabled = false;
     }
 
     if (adminControls) {
-      adminControls.style.display = isStaff ? 'flex' : 'none';
+      adminControls.hidden = !isAdmin;
+      adminControls.style.display = isAdmin ? 'flex' : 'none';
+    }
+
+    if (switchElem) {
+      switchElem.disabled = !isAdmin;
+      switchElem.checked = isAdmin && isDateOutOfService(courtId, todayISO);
+      if (!isAdmin) {
+        switchElem.checked = false;
+      }
     }
 
     if (nextButton) {
       nextButton.textContent = isStaff ? 'Ver reservas del día' : 'Ver horas disponibles';
     }
+
+    sessionStorage.setItem('calendar-selected-date', todayISO);
 
     const getRangeDates = () => {
       const today = new Date();
@@ -686,7 +716,7 @@
       dateFormat: 'Y-m-d',
       minDate: getRangeDates().minDate,
       maxDate: getRangeDates().maxDate,
-      defaultDate: selectedDateField || null,
+      defaultDate: todayISO,
       disable: [function (date) {
         return getDisabledDates(date);
       }],
@@ -702,13 +732,13 @@
       },
       onReady: function () {
         renderOutOfServiceClasses(this);
-        if (selectedDateField) {
-          dateDisplay.textContent = selectedDateField;
-          nextButton.disabled = false;
+        if (dateDisplay) {
+          dateDisplay.textContent = todayISO;
         }
+        nextButton.disabled = false;
         if (switchElem) {
-          switchElem.disabled = !isStaff;
-          switchElem.checked = !!(selectedDateField && isDateOutOfService(courtId, selectedDateField));
+          switchElem.disabled = !isAdmin;
+          switchElem.checked = isAdmin && isDateOutOfService(courtId, todayISO);
         }
       }
     });
@@ -734,6 +764,12 @@
 
     if (switchElem) {
       switchElem.addEventListener('change', function () {
+        if (!isAdmin) {
+          this.checked = false;
+          this.disabled = true;
+          return;
+        }
+
         const date = sessionStorage.getItem('calendar-selected-date');
         if (!date) {
           alert('Debe seleccionar un día primero.');
@@ -1042,6 +1078,7 @@
       return;
     }
 
+    const isAdmin = isCurrentUserAdmin();
     const content = document.querySelector('.content-area');
     if (!content) return;
 
@@ -1066,9 +1103,16 @@
       const status = normalizeStatus(reservation);
       const statusClass = status === 'Reservada' ? 'reserved' : status === 'En curso' ? 'in-progress' : status === 'Cancelada' ? 'canceled' : 'pending';
       const timeInfo = reservation.hours.length > 1 ? reservation.hours.join(', ') : reservation.hours[0];
-      const showDayApproveAction = shouldShowApprovalAction(reservation);
-      const showDayCancelRequestAction = shouldShowCancelRequestAction(reservation);
-      const showDayCancelAction = shouldShowCancelAction(reservation);
+      const showDayApproveAction = isAdmin && shouldShowApprovalAction(reservation);
+      const showDayCancelRequestAction = isAdmin && shouldShowCancelRequestAction(reservation);
+      const showDayCancelAction = isAdmin && shouldShowCancelAction(reservation);
+      const adminActionsMarkup = isAdmin ? `
+        <div class="admin-actions">
+          ${showDayApproveAction ? '<button class="btn-approve" data-action="approve" data-id="' + reservation.id + '">✓ Aprobar Reserva</button>' : ''}
+          ${showDayCancelRequestAction ? '<button class="btn-cancel-req" data-action="approve-cancel" data-id="' + reservation.id + '">✓ Confirmar Cancelación</button>' : ''}
+          ${showDayCancelAction ? '<button class="btn-danger" data-action="cancel" data-id="' + reservation.id + '">' + (reservation.cancelRequested ? 'Rechazar cancelación' : 'Cancelar Reserva') + '</button>' : ''}
+        </div>
+      ` : '';
       return `
         <article class="reservation-card ${statusClass}">
           <div class="res-top">
@@ -1084,11 +1128,7 @@
               <div>📞 <strong>Tel:</strong> ${reservation.phone}</div>
             </div>
           </div>
-          <div class="admin-actions">
-            ${showDayApproveAction ? '<button class="btn-approve" data-action="approve" data-id="' + reservation.id + '">✓ Aprobar Reserva</button>' : ''}
-            ${showDayCancelRequestAction ? '<button class="btn-cancel-req" data-action="approve-cancel" data-id="' + reservation.id + '">✓ Confirmar Cancelación</button>' : ''}
-            ${showDayCancelAction ? '<button class="btn-danger" data-action="cancel" data-id="' + reservation.id + '">' + (reservation.cancelRequested ? 'Rechazar cancelación' : 'Cancelar Reserva') + '</button>' : ''}
-          </div>
+          ${adminActionsMarkup}
         </article>
       `;
     }).join('') : '<p style="color: var(--text-muted);">No hay reservas para este día.</p>';
@@ -1104,11 +1144,16 @@
       ${cards}
     `;
 
-    content.querySelectorAll('[data-action="approve-cancel"]').forEach((button) => {
-      button.addEventListener('click', function () {
-        handleAdminReservationAction('approve-cancel', this.getAttribute('data-id'));
+    if (isAdmin) {
+      content.querySelectorAll('[data-action]').forEach((button) => {
+        button.addEventListener('click', function () {
+          const action = this.getAttribute('data-action');
+          const id = this.getAttribute('data-id');
+          if (!action || !id) return;
+          handleAdminReservationAction(action, id);
+        });
       });
-    });
+    }
   }
 
   document.addEventListener('DOMContentLoaded', function () {

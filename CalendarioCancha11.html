@@ -430,7 +430,10 @@
   </div>
 
   <script>
-    let selectedDate = '23/09/2026';
+    const toISODate = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    const currentUser = JSON.parse(localStorage.getItem('prototipo-current-user') || 'null');
+    const isAdmin = !!currentUser && currentUser.role === 'Administrador';
+    let selectedDate = toISODate(new Date());
 
     function selectDate(element, dateStr) {
       document.querySelectorAll('.day-cell').forEach(cell => {
@@ -441,10 +444,12 @@
       element.classList.add('selected');
       selectedDate = dateStr;
       document.getElementById('selectedDateDisplay').innerText = dateStr;
-      document.getElementById('btnNext').disabled = false;
+      const nextButton = document.getElementById('btnNext');
+      if (nextButton) nextButton.disabled = false;
     }
 
     function toggleOutOfService(isChecked) {
+      if (!isAdmin) return;
       if (isChecked) {
         alert('El día ' + selectedDate + ' ha sido marcado como Fuera de Servicio.');
       } else {
@@ -464,6 +469,18 @@
         document.getElementById('nextBtn').style.display = 'block';
       }
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const adminControls = document.querySelector('.admin-controls');
+      const switchInput = document.getElementById('outOfServiceSwitch');
+      if (adminControls) {
+        adminControls.style.display = isAdmin ? 'flex' : 'none';
+      }
+      if (switchInput) {
+        switchInput.disabled = !isAdmin;
+      }
+      document.getElementById('selectedDateDisplay').innerText = selectedDate;
+    });
   </script>
   <script src="app.js"></script>
 </body>
